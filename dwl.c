@@ -551,6 +551,10 @@ applyrules(Client *c)
 					mon = m;
 		}
 	}
+    if (c->scratchkey == 's') {
+        c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
+        c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y;
+    }
 	wlr_scene_node_reparent(c->scene, layers[c->isfloating ? LyrFloat : LyrTile]);
 	setmon(c, mon, newtags);
 }

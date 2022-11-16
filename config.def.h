@@ -127,7 +127,7 @@ static const char *termcmd[] = { "footstep", NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
 
 /* named scratchpads - First arg only serves to match against key in rules*/
-static const char *scratchpadcmd[] = { "s", "footstep", "-T", "scratchpad", NULL };
+static const char *scratchpadcmd[] = { "s", "footstep", "-T", "xoscratchpadxo", NULL };
 
 #include "shiftview.c"
 
