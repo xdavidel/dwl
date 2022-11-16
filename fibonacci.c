@@ -1,18 +1,18 @@
 void fibonacci(Monitor *mon, int s) {
 	unsigned int i=0, n=0, nx, ny, nw, nh;
 	Client *c;
-	
+
 	wl_list_for_each(c, &clients, link)
 		if (VISIBLEON(c, mon) && !c->isfloating)
 			n++;
 	if(n == 0)
 		return;
-	
+
 	nx = mon->w.x;
 	ny = 0;
 	nw = mon->w.width;
 	nh = mon->w.height;
-	
+
 	wl_list_for_each(c, &clients, link)
 		if (VISIBLEON(c, mon) && !c->isfloating){
 		if((i % 2 && nh / 2 > 2 * c->bw)
@@ -54,7 +54,7 @@ void fibonacci(Monitor *mon, int s) {
 			i++;
 		}
 		resize(c, (struct wlr_box){.x = nx, .y = ny,
-			.width = nw - 2 * c->bw, .height = nh - 2 * c->bw}, 0);
+			.width = nw - 2 * c->bw, .height = nh - 2 * c->bw}, 0, 1);
 	}
 }
 

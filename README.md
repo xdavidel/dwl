@@ -59,6 +59,8 @@ Those are the applied patches in this fork:
   Cycle through available layouts
 - [unclutter](https://github.com/djpohly/dwl/wiki/unclutter)
   Hide the mouse cursor if it isn’t being used.
+- [smartborders](https://github.com/djpohly/dwl/wiki/smartborders)
+  The borders of a window aren't drawn when is the only tiling window in its tag or is in a monocle layout.
 
 ## Building dwl
 
