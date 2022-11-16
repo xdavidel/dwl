@@ -32,7 +32,8 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },
 	{ "[M]",      monocle },
 	{ "[@]",      spiral },
-	{ "[\\]",      dwindle },
+	{ "[\\]",     dwindle },
+	{ "HHH",      grid },
 	// { "><>",      NULL },    /* no layout function means floating behavior */
 	{ NULL,       NULL },
 };
@@ -142,6 +143,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_u,       setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    Key_s,       setlayout,      {.v = &layouts[2]} },
     { MODKEY|WLR_MODIFIER_SHIFT, Key_s,       setlayout,      {.v = &layouts[3]} },
+	{ MODKEY,                    Key_g,       setlayout,      {.v = &layouts[4]} },
    	{ MODKEY|WLR_MODIFIER_CTRL,  Key_comma,   cyclelayout,    {.i = -1 } },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_period,  cyclelayout,    {.i = +1 } },
 	{ MODKEY,                    Key_f,       togglefullscreen, {0} },
