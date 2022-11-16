@@ -72,6 +72,9 @@ Those are the applied patches in this fork:
   Arranges windows in a grid of equal sizes.
 - [bottomstack](https://github.com/djpohly/dwl/wiki/bottomstack)
   bstack and bstackhoriz are two stack layouts for dwl.
+- [shiftview](https://github.com/djpohly/dwl/wiki/shiftview)
+  Adds shiftview function that allows to cycle through tags.
+
 
 
 

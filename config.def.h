@@ -122,6 +122,9 @@ static const int cursor_timeout = 5;
 static const char *termcmd[] = { "foot", NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
 
+#include "shiftview.c"
+
+
 #include "keys.h"
 static const Key keys[] = {
 	/* modifier                  key          function        argument */
@@ -158,6 +161,8 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_Right,   focusmon,       {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Left,    tagmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Right,   tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Right,   shiftview,      {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Left,    shiftview,      {.i = 1 } },
 	{ MODKEY,                    Key_space,   togglekblayout, {0} },
 	TAGKEYS(                     Key_1,                       0),
 	TAGKEYS(                     Key_2,                       1),
