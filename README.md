@@ -1,6 +1,6 @@
 # dwl - dwm for Wayland
 
-Join us on our [Discord server] or at [#dwl] on irc.libera.chat.
+My fork of [dwl](https://github.com/djpohly/dwl) wayland compositor.
 
 dwl is a compact, hackable compositor for [Wayland] based on [wlroots]. It is
 intended to fill the same space in the Wayland world that dwm does in X11,
@@ -47,9 +47,16 @@ Feature *non-goals* for the main codebase include:
   be done through the compositor
 - Animations and visual effects
 
+## Patches
+
+Those are the applied patches in this fork:
+
+- [keycodes](https://github.com/djpohly/dwl/wiki/keycodes)
+  Use keycodes instead of keysyms
+
 ## Building dwl
 
-dwl has only two dependencies: `wlroots` and `wayland-protocols`. 
+dwl has only two dependencies: `wlroots` and `wayland-protocols`.
 
 Simply install these (and their `-devel` versions if your distro has separate
 development packages) and run `make`.  If you wish to build against a Git
