@@ -76,6 +76,11 @@ Those are the applied patches in this fork:
   Arranges windows in a grid. Except it adjusts the number of windows
   in the first few columns to avoid empty cells
 - [autostart](https://github.com/djpohly/dwl/wiki/autostart)
+  Allow dwl to execute commands from autostart array in your config.h file.
+  And when you exit dwl all processes from autostart array will be killed.
+- [namedscratchpads](https://github.com/djpohly/dwl/wiki/namedscratchpads)
+  Allows for the creation of multiple scratchpad windows, each assigned
+  to a different keybinding.
 
 
 

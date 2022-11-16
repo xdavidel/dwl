@@ -19,11 +19,12 @@ static const float fullscreen_bg[]  = {0.1, 0.1, 0.1, 1.0};
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask     isfloating   monitor */
+	/* app_id     title       tags mask     isfloating   monitor scratchkey */
 	/* examples:
 	{ "Gimp",     NULL,       0,            1,           -1 },
 	*/
-	{ "firefox",  NULL,       1 << 8,       0,           -1 },
+	{ "firefox",  NULL,       1 << 8,       0,           -1,      0  },
+	{ NULL,     "scratchpad", 0,            1,           -1,     's' },
 };
 
 /* layout(s) */
@@ -122,8 +123,11 @@ static const char *const autostart[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[] = { "foot", NULL };
+static const char *termcmd[] = { "footstep", NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
+
+/* named scratchpads - First arg only serves to match against key in rules*/
+static const char *scratchpadcmd[] = { "s", "footstep", "-T", "scratchpad", NULL };
 
 #include "shiftview.c"
 
@@ -133,6 +137,7 @@ static const Key keys[] = {
 	/* modifier                  key          function        argument */
 	{ MODKEY,                    Key_slash,   spawn,          {.v = menucmd} },
 	{ MODKEY,                    Key_Return,  spawn,          {.v = termcmd} },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_Return,  togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                    Key_Down,    focusstack,     {.i = +1} },
 	{ MODKEY,                    Key_Up,      focusstack,     {.i = -1} },
 	{ MODKEY,                    Key_i,       incnmaster,     {.i = +1} },
