@@ -68,6 +68,12 @@ Those are the applied patches in this fork:
 - [vanitygaps](https://github.com/djpohly/dwl/wiki/vanitygaps)
   Add gaps space between clients.
   NOTE: need to be applied manually to other layouts (like fibonacci).
+- [gridmode](https://github.com/djpohly/dwl/wiki/gridmode)
+  Arranges windows in a grid of equal sizes.
+- [bottomstack](https://github.com/djpohly/dwl/wiki/bottomstack)
+  bstack and bstackhoriz are two stack layouts for dwl.
+
+
 
 ## Building dwl
 

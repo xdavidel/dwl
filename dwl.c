@@ -301,6 +301,8 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void dwindle(Monitor *m);
 static void spiral(Monitor *m);
+static void bstack(Monitor *m);
+static void bstackhoriz(Monitor *m);
 static void togglekblayout(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
@@ -1416,6 +1418,91 @@ grid(Monitor *m) {
                 .width = cw - aw, .height = ch - ah}, 0, !smartborders);
         i++;
     }
+}
+
+static void
+bstack(Monitor *m)
+{
+	int w, h, mh, mx, tx, ty, tw;
+	unsigned int i, n = 0;
+	Client *c;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating)
+			n++;
+	if (n == 0)
+		return;
+
+	if (n > m->nmaster) {
+		mh = m->nmaster ? m->mfact * m->w.height : 0;
+		tw = m->w.width / (n - m->nmaster);
+		ty = m->w.y + mh;
+	} else {
+		mh = m->w.height;
+		tw = m->w.width;
+		ty = m->w.y;
+	}
+
+	i = mx = 0;
+	tx = m-> w.x;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating)
+			continue;
+		if (i < m->nmaster) {
+			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
+            resize(c, (struct wlr_box){.x = m->w.x + mx + gappoh, .y = m->w.y + gappov,
+                    .width = w - (2 * c->bw), .height = mh - (2 * c->bw)}, 0, !smartborders);
+			mx += c->geom.width;
+		} else {
+			h = m->w.height - mh;
+            resize(c, (struct wlr_box){.x = tx + gappoh, .y = ty + gappov,
+                    .width = tw - (2 * c->bw), .height = h - (2 * c->bw)}, 0, !smartborders);
+			if (tw != m->w.width)
+				tx += c->geom.width;
+		}
+		i++;
+	}
+}
+
+static void
+bstackhoriz(Monitor *m) {
+	int w, mh, mx, tx, ty, th;
+	unsigned int i, n = 0;
+	Client *c;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating)
+			n ++;
+	if (n == 0)
+		return;
+
+	if (n > m->nmaster) {
+		mh = m->nmaster ? m->mfact * m->w.height : 0;
+		th = (m->w.height - mh) / (n - m->nmaster);
+		ty = m->w.y + mh;
+	} else {
+		th = mh = m->w.height;
+		ty = m->w.y;
+	}
+
+	i = mx = 0;
+	tx = m-> w.x;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c,m) || c->isfloating)
+			continue;
+		if (i < m->nmaster) {
+			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
+            resize(c, (struct wlr_box){.x = m->w.x + mx + gappoh, .y = m->w.y + gappov,
+                    .width = w - (2 * c->bw), .height = mh - (2 * c->bw)}, 0, !smartborders);
+			mx += c->geom.width;
+		} else {
+            resize(c, (struct wlr_box){.x = tx + gappoh, .y = ty + gappov,
+                    .width = m->w.width - (2 * c->bw), .height = th - (2 * c->bw)}, 0, !smartborders);
+			if (th != m->w.height)
+				ty += c->geom.height;
+		}
+		i++;
+	}
 }
 
 void
