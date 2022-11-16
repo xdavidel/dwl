@@ -72,6 +72,9 @@ Those are the applied patches in this fork:
   bstack and bstackhoriz are two stack layouts for dwl.
 - [shiftview](https://github.com/djpohly/dwl/wiki/shiftview)
   Adds shiftview function that allows to cycle through tags.
+- [gaplessgrid](https://github.com/djpohly/dwl/wiki/gaplessgrid)
+  Arranges windows in a grid. Except it adjusts the number of windows
+  in the first few columns to avoid empty cells
 
 
 
