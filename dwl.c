@@ -283,7 +283,6 @@ static void resize(Client *c, struct wlr_box geo, int interact, int draw_borders
 static void run(char *startup_cmd);
 static Client *selclient(void);
 static void setcursor(struct wl_listener *listener, void *data);
-static void setkblayout(Keyboard *kb, const struct xkb_rule_names *newrule);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
 static void setgaps(int oh, int ov, int ih, int iv);
@@ -303,7 +302,6 @@ static void dwindle(Monitor *m);
 static void spiral(Monitor *m);
 static void bstack(Monitor *m);
 static void bstackhoriz(Monitor *m);
-static void togglekblayout(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
 static void togglegaps(const Arg *arg);
@@ -352,7 +350,6 @@ static bool cursor_hidden = false;
 
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
-static unsigned int kblayout = 0; /* index of kblayouts */
 static unsigned int cursor_mode;
 static Client *grabc;
 static int grabcx, grabcy; /* client-relative */
@@ -901,25 +898,19 @@ createidleinhibitor(struct wl_listener *listener, void *data)
 }
 
 void
-setkblayout(Keyboard *kb, const struct xkb_rule_names *newrule)
-{
-	/* Prepare an XKB keymap and assign it to the keyboard. */
-	struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-	struct xkb_keymap *keymap = xkb_map_new_from_names(context, newrule,
-			XKB_KEYMAP_COMPILE_NO_FLAGS);
-	wlr_keyboard_set_keymap(kb->device->keyboard, keymap);
-	xkb_keymap_unref(keymap);
-	xkb_context_unref(context);
-}
-
-void
 createkeyboard(struct wlr_input_device *device)
 {
 	Keyboard *kb = device->data = ecalloc(1, sizeof(*kb));
 	kb->device = device;
 
-	setkblayout(kb, &xkb_rules);
+	/* Prepare an XKB keymap and assign it to the keyboard. */
+	struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+	struct xkb_keymap *keymap = xkb_map_new_from_names(context, &xkb_rules,
+			XKB_KEYMAP_COMPILE_NO_FLAGS);
 
+	wlr_keyboard_set_keymap(kb->device->keyboard, keymap);
+	xkb_keymap_unref(keymap);
+	xkb_context_unref(context);
 	wlr_keyboard_set_repeat_info(device->keyboard, repeat_rate, repeat_delay);
 
 	/* Here we set up listeners for keyboard events. */
@@ -2738,19 +2729,6 @@ togglefullscreen(const Arg *arg)
 	Client *sel = selclient();
 	if (sel)
 		setfullscreen(sel, !sel->isfullscreen);
-}
-
-void
-togglekblayout(const Arg *arg)
-{
-	Keyboard *kb;
-	struct xkb_rule_names newrule = xkb_rules;
-
-	kblayout = (kblayout + 1) % LENGTH(kblayouts);
-	newrule.layout = kblayouts[kblayout];
-	wl_list_for_each(kb, &keyboards, link) {
-		setkblayout(kb, &newrule);
-	}
 }
 
 void

@@ -56,17 +56,13 @@ static const struct xkb_rule_names xkb_rules = {
 	/* example:
 	.options = "ctrl:nocaps",
 	*/
-	.options = NULL,
+    .layout = "us,il",
+    .options = "grp:alt_shift_toggle",
+	// .options = NULL,
 };
 
 static const int repeat_rate = 50;
 static const int repeat_delay = 300;
-
-/* gb will be set the first time togglekblayout is called, then us.. it is
- * recommended to set the same layout in position 0 of kblayouts and in
- * xkb_rules */
-static const char *kblayouts[] = {"us", "il"};
-
 
 /* Trackpad */
 static const int tap_to_click = 1;
@@ -163,7 +159,6 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Right,   tagmon,         {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Right,   shiftview,      {.i = -1 } },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Left,    shiftview,      {.i = 1 } },
-	{ MODKEY,                    Key_space,   togglekblayout, {0} },
 	TAGKEYS(                     Key_1,                       0),
 	TAGKEYS(                     Key_2,                       1),
 	TAGKEYS(                     Key_3,                       2),
