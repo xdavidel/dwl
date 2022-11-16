@@ -55,6 +55,8 @@ Those are the applied patches in this fork:
   Use keycodes instead of keysyms
 - [fibonacci](https://github.com/djpohly/dwl/wiki/fibonacci)
   A spiral and dwindle layouts
+- [cyclelayouts](https://github.com/djpohly/dwl/wiki/cyclelayouts)
+  Cycle through available layouts
 
 ## Building dwl
 

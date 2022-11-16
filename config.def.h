@@ -28,6 +28,7 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 	{ "[@]",      spiral },
 	{ "[\\]",      dwindle },
+	{ NULL,       NULL },
 };
 
 /* monitors */
@@ -123,7 +124,9 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                    Key_s,       setlayout,      {.v = &layouts[3]} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_s,       setlayout,      {.v = &layouts[4]} },
+    { MODKEY|WLR_MODIFIER_SHIFT, Key_s,       setlayout,      {.v = &layouts[4]} },
+   	{ MODKEY|WLR_MODIFIER_CTRL,  Key_comma,   cyclelayout,    {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_period,  cyclelayout,    {.i = +1 } },
 	{ MODKEY,                    Key_space,   setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
 	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
@@ -157,3 +160,4 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
+
