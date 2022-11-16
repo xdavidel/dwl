@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rm *.orig
+rm *.rej
+rm config.h
