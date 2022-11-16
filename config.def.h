@@ -1,9 +1,14 @@
-#include "fibonacci.c"
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
 static const unsigned int borderpx  = 2;  /* border pixel of windows */
 static const int lockfullscreen     = 1;  /* 1 will force focus on the fullscreen window */
+static const unsigned int gappih    = 10; /* horiz inner gap between windows */
+static const unsigned int gappiv    = 10; /* vert inner gap between windows */
+static const unsigned int gappoh    = 10; /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 10; /* vert outer gap between windows and screen edge */
+static const int smartgaps          = 1;  /* 1 means no outer gap when there is only one window */
 static const int smartborders       = 1;
+static const int monoclegaps        = 0;  /* 1 means outer gaps in monocle layout */
 static const float rootcolor[]      = {0.3, 0.3, 0.3, 1.0};
 static const float bordercolor[]    = {0.5, 0.5, 0.5, 1.0};
 static const float focuscolor[]     = {1.0, 0.0, 0.0, 1.0};
@@ -125,8 +130,13 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_Left,    setmfact,       {.f = -0.05} },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_Right,   setmfact,       {.f = +0.05} },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_v,       defaultgaps,    {0} },
+	{ MODKEY,                    Key_v,       incgaps,        {.i = +3 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_v,       incgaps,        {.i = -3 } },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_v,       togglegaps,     {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  zoom,           {0} },
 	{ MODKEY,                    Key_Tab,     view,           {0} },
+	{ MODKEY,                    Key_Escape,  view,           {0} },
 	{ MODKEY,                    Key_q,       killclient,     {0} },
 	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                    Key_u,       setlayout,      {.v = &layouts[1]} },

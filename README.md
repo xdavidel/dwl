@@ -65,6 +65,9 @@ Those are the applied patches in this fork:
   Implements focusmon() function that moves the cursor to the focused monitor.
 - [toggleKbLayout](https://github.com/djpohly/dwl/wiki/toggleKbLayout)
   Switch between multiple keyboard layouts at runtime.
+- [vanitygaps](https://github.com/djpohly/dwl/wiki/vanitygaps)
+  Add gaps space between clients.
+  NOTE: need to be applied manually to other layouts (like fibonacci).
 
 ## Building dwl
 
