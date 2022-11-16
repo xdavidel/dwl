@@ -1,7 +1,7 @@
 #include "fibonacci.c"
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
-static const unsigned int borderpx  = 1;  /* border pixel of windows */
+static const unsigned int borderpx  = 2;  /* border pixel of windows */
 static const int lockfullscreen     = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders       = 1;
 static const float rootcolor[]      = {0.3, 0.3, 0.3, 1.0};
@@ -25,10 +25,10 @@ static const Rule rules[] = {
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },
-	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "[@]",      spiral },
 	{ "[\\]",      dwindle },
+	// { "><>",      NULL },    /* no layout function means floating behavior */
 	{ NULL,       NULL },
 };
 
@@ -51,8 +51,14 @@ static const struct xkb_rule_names xkb_rules = {
 	.options = NULL,
 };
 
-static const int repeat_rate = 25;
-static const int repeat_delay = 600;
+static const int repeat_rate = 50;
+static const int repeat_delay = 300;
+
+/* gb will be set the first time togglekblayout is called, then us.. it is
+ * recommended to set the same layout in position 0 of kblayouts and in
+ * xkb_rules */
+static const char *kblayouts[] = {"us", "il"};
+
 
 /* Trackpad */
 static const int tap_to_click = 1;
@@ -93,7 +99,7 @@ static const double accel_speed = 0.0;
 static const int cursor_timeout = 5;
 
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
-#define MODKEY WLR_MODIFIER_ALT
+#define MODKEY WLR_MODIFIER_LOGO
 
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
@@ -111,33 +117,32 @@ static const char *menucmd[] = { "bemenu-run", NULL };
 #include "keys.h"
 static const Key keys[] = {
 	/* modifier                  key          function        argument */
-	{ MODKEY,                    Key_p,       spawn,          {.v = menucmd} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
-	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
-	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },
+	{ MODKEY,                    Key_slash,   spawn,          {.v = menucmd} },
+	{ MODKEY,                    Key_Return,  spawn,          {.v = termcmd} },
+	{ MODKEY,                    Key_Down,    focusstack,     {.i = +1} },
+	{ MODKEY,                    Key_Up,      focusstack,     {.i = -1} },
 	{ MODKEY,                    Key_i,       incnmaster,     {.i = +1} },
 	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
-	{ MODKEY,                    Key_h,       setmfact,       {.f = -0.05} },
-	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05} },
-	{ MODKEY,                    Key_Return,  zoom,           {0} },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_Left,    setmfact,       {.f = -0.05} },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_Right,   setmfact,       {.f = +0.05} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  zoom,           {0} },
 	{ MODKEY,                    Key_Tab,     view,           {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
+	{ MODKEY,                    Key_q,       killclient,     {0} },
 	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                    Key_s,       setlayout,      {.v = &layouts[3]} },
-    { MODKEY|WLR_MODIFIER_SHIFT, Key_s,       setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                    Key_u,       setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                    Key_s,       setlayout,      {.v = &layouts[2]} },
+    { MODKEY|WLR_MODIFIER_SHIFT, Key_s,       setlayout,      {.v = &layouts[3]} },
    	{ MODKEY|WLR_MODIFIER_CTRL,  Key_comma,   cyclelayout,    {.i = -1 } },
 	{ MODKEY|WLR_MODIFIER_CTRL,  Key_period,  cyclelayout,    {.i = +1 } },
-	{ MODKEY,                    Key_space,   setlayout,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
-	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
+	{ MODKEY,                    Key_f,       togglefullscreen, {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,       togglefloating, {0} },
 	{ MODKEY,                    Key_0,       view,           {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,            {.ui = ~0} },
-	{ MODKEY,                    Key_comma,   focusmon,       {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    Key_period,  focusmon,       {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_comma,   tagmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_period,  tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY,                    Key_Left,    focusmon,       {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                    Key_Right,   focusmon,       {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Left,    tagmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Right,   tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY,                    Key_space,   togglekblayout, {0} },
 	TAGKEYS(                     Key_1,                       0),
 	TAGKEYS(                     Key_2,                       1),
 	TAGKEYS(                     Key_3,                       2),
@@ -147,7 +152,7 @@ static const Key keys[] = {
 	TAGKEYS(                     Key_7,                       6),
 	TAGKEYS(                     Key_8,                       7),
 	TAGKEYS(                     Key_9,                       8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_q,       quit,           {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_e,       quit,           {0} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,Key_BackSpace, quit, {0} },
@@ -162,4 +167,3 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
-

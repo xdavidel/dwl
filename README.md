@@ -63,6 +63,8 @@ Those are the applied patches in this fork:
   The borders of a window aren't drawn when is the only tiling window in its tag or is in a monocle layout.
 - [focusMonPointer](https://github.com/djpohly/dwl/wiki/focusMonPointer)
   Implements focusmon() function that moves the cursor to the focused monitor.
+- [toggleKbLayout](https://github.com/djpohly/dwl/wiki/toggleKbLayout)
+  Switch between multiple keyboard layouts at runtime.
 
 ## Building dwl
 

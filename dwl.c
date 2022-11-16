@@ -270,6 +270,7 @@ static void resize(Client *c, struct wlr_box geo, int interact, int draw_borders
 static void run(char *startup_cmd);
 static Client *selclient(void);
 static void setcursor(struct wl_listener *listener, void *data);
+static void setkblayout(Keyboard *kb, const struct xkb_rule_names *newrule);
 static void setfloating(Client *c, int floating);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
@@ -284,6 +285,7 @@ static void startdrag(struct wl_listener *listener, void *data);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
+static void togglekblayout(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -331,6 +333,7 @@ static bool cursor_hidden = false;
 
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
+static unsigned int kblayout = 0; /* index of kblayouts */
 static unsigned int cursor_mode;
 static Client *grabc;
 static int grabcx, grabcy; /* client-relative */
@@ -877,21 +880,25 @@ createidleinhibitor(struct wl_listener *listener, void *data)
 }
 
 void
+setkblayout(Keyboard *kb, const struct xkb_rule_names *newrule)
+{
+	/* Prepare an XKB keymap and assign it to the keyboard. */
+	struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+	struct xkb_keymap *keymap = xkb_map_new_from_names(context, newrule,
+			XKB_KEYMAP_COMPILE_NO_FLAGS);
+	wlr_keyboard_set_keymap(kb->device->keyboard, keymap);
+	xkb_keymap_unref(keymap);
+	xkb_context_unref(context);
+}
+
+void
 createkeyboard(struct wlr_input_device *device)
 {
-	struct xkb_context *context;
-	struct xkb_keymap *keymap;
 	Keyboard *kb = device->data = ecalloc(1, sizeof(*kb));
 	kb->device = device;
 
-	/* Prepare an XKB keymap and assign it to the keyboard. */
-	context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-	keymap = xkb_keymap_new_from_names(context, &xkb_rules,
-		XKB_KEYMAP_COMPILE_NO_FLAGS);
+	setkblayout(kb, &xkb_rules);
 
-	wlr_keyboard_set_keymap(device->keyboard, keymap);
-	xkb_keymap_unref(keymap);
-	xkb_context_unref(context);
 	wlr_keyboard_set_repeat_info(device->keyboard, repeat_rate, repeat_delay);
 
 	/* Here we set up listeners for keyboard events. */
@@ -2410,6 +2417,19 @@ togglefullscreen(const Arg *arg)
 }
 
 void
+togglekblayout(const Arg *arg)
+{
+	Keyboard *kb;
+	struct xkb_rule_names newrule = xkb_rules;
+
+	kblayout = (kblayout + 1) % LENGTH(kblayouts);
+	newrule.layout = kblayouts[kblayout];
+	wl_list_for_each(kb, &keyboards, link) {
+		setkblayout(kb, &newrule);
+	}
+}
+
+void
 toggletag(const Arg *arg)
 {
 	unsigned int newtags;
@@ -2791,3 +2811,4 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-s startup command]", argv[0]);
 }
+
