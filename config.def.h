@@ -1,3 +1,4 @@
+#include "fibonacci.c"
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
 static const unsigned int borderpx  = 1;  /* border pixel of windows */
@@ -25,6 +26,8 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
+	{ "[@]",      spiral },
+	{ "[\\]",      dwindle },
 };
 
 /* monitors */
@@ -119,6 +122,8 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                    Key_s,       setlayout,      {.v = &layouts[3]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_s,       setlayout,      {.v = &layouts[4]} },
 	{ MODKEY,                    Key_space,   setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
 	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
