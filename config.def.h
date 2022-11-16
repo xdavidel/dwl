@@ -103,6 +103,12 @@ static const enum libinput_config_accel_profile accel_profile = LIBINPUT_CONFIG_
 static const double accel_speed = 0.0;
 static const int cursor_timeout = 5;
 
+/* Autostart */
+static const char *const autostart[] = {
+        "sh", "-c", "setbg", NULL,
+        NULL /* terminate */
+};
+
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
 #define MODKEY WLR_MODIFIER_LOGO
 
@@ -185,4 +191,3 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
-

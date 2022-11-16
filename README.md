@@ -75,6 +75,7 @@ Those are the applied patches in this fork:
 - [gaplessgrid](https://github.com/djpohly/dwl/wiki/gaplessgrid)
   Arranges windows in a grid. Except it adjusts the number of windows
   in the first few columns to avoid empty cells
+- [autostart](https://github.com/djpohly/dwl/wiki/autostart)
 
 
 
