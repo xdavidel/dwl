@@ -57,6 +57,8 @@ Those are the applied patches in this fork:
   A spiral and dwindle layouts
 - [cyclelayouts](https://github.com/djpohly/dwl/wiki/cyclelayouts)
   Cycle through available layouts
+- [unclutter](https://github.com/djpohly/dwl/wiki/unclutter)
+  Hide the mouse cursor if it isn’t being used.
 
 ## Building dwl
 

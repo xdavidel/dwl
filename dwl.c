@@ -241,6 +241,8 @@ static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Client *focustop(Monitor *m);
 static void fullscreennotify(struct wl_listener *listener, void *data);
+static void handlecursoractivity(bool restore_focus);
+static int hidecursor(void *data);
 static void incnmaster(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keycode_t keycode);
@@ -324,6 +326,8 @@ static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
 
 static struct wlr_cursor *cursor;
 static struct wlr_xcursor_manager *cursor_mgr;
+static struct wl_event_source *hide_source;
+static bool cursor_hidden = false;
 
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
@@ -639,6 +643,7 @@ axisnotify(struct wl_listener *listener, void *data)
 	 * for example when you move the scroll wheel. */
 	struct wlr_event_pointer_axis *event = data;
 	wlr_idle_notify_activity(idle, seat);
+	handlecursoractivity(true);
 	/* TODO: allow usage of scroll whell for mousebindings, it can be implemented
 	 * checking the event's orientation and the delta of the event */
 	/* Notify the client with pointer focus of the axis event. */
@@ -657,6 +662,7 @@ buttonpress(struct wl_listener *listener, void *data)
 	const Button *b;
 
 	wlr_idle_notify_activity(idle, seat);
+	handlecursoractivity(true);
 
 	switch (event->state) {
 	case WLR_BUTTON_PRESSED:
@@ -1317,6 +1323,27 @@ fullscreennotify(struct wl_listener *listener, void *data)
 }
 
 void
+handlecursoractivity(bool restore_focus)
+{
+	wl_event_source_timer_update(hide_source, cursor_timeout * 1000);
+	if (cursor_hidden) {
+		wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
+		cursor_hidden = false;
+		if (restore_focus)
+			motionnotify(0);
+	}
+}
+
+int
+hidecursor(void *data)
+{
+	wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
+	wlr_seat_pointer_notify_clear_focus(seat);
+	cursor_hidden = true;
+	return 1;
+}
+
+void
 incnmaster(const Arg *arg)
 {
 	if (!arg || !selmon)
@@ -1548,6 +1575,7 @@ motionnotify(uint32_t time)
 	/* time is 0 in internal calls meant to restore pointer focus. */
 	if (time) {
 		wlr_idle_notify_activity(idle, seat);
+		handlecursoractivity(false);
 
 		/* Update selmon (even while dragging a window) */
 		if (sloppyfocus)
@@ -1743,7 +1771,10 @@ pointerfocus(Client *c, struct wlr_surface *surface, double sx, double sy,
 	/* Let the client know that the mouse cursor has entered one
 	 * of its surfaces, and make keyboard focus follow if desired.
 	 * wlroots makes this a no-op if surface is already focused */
-	wlr_seat_pointer_notify_enter(seat, surface, sx, sy);
+	/* Don't show the cursor when calling motionnotify(0) to restore pointer
+	 * focus. */
+	if (!cursor_hidden)
+		wlr_seat_pointer_notify_enter(seat, surface, sx, sy);
 	wlr_seat_pointer_notify_motion(seat, time, sx, sy);
 }
 
@@ -1910,6 +1941,7 @@ run(char *startup_cmd)
 	 * monitor when displayed here */
 	wlr_cursor_warp_closest(cursor, NULL, cursor->x, cursor->y);
 	wlr_xcursor_manager_set_cursor_image(cursor_mgr, cursor_image, cursor);
+	handlecursoractivity(false);
 
 	/* Run the Wayland event loop. This does not return until you exit the
 	 * compositor. Starting the backend rigged up all of the necessary event
@@ -2205,6 +2237,9 @@ setup(void)
 	wl_signal_add(&cursor->events.button, &cursor_button);
 	wl_signal_add(&cursor->events.axis, &cursor_axis);
 	wl_signal_add(&cursor->events.frame, &cursor_frame);
+
+	hide_source = wl_event_loop_add_timer(wl_display_get_event_loop(dpy),
+			hidecursor, cursor);
 
 	/*
 	 * Configures a seat, which is a single "seat" at which a user sits and
