@@ -61,6 +61,8 @@ Those are the applied patches in this fork:
   Hide the mouse cursor if it isn’t being used.
 - [smartborders](https://github.com/djpohly/dwl/wiki/smartborders)
   The borders of a window aren't drawn when is the only tiling window in its tag or is in a monocle layout.
+- [focusMonPointer](https://github.com/djpohly/dwl/wiki/focusMonPointer)
+  Implements focusmon() function that moves the cursor to the focused monitor.
 
 ## Building dwl
 
