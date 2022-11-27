@@ -949,12 +949,17 @@ createidleinhibitor(struct wl_listener *listener, void *data)
 void
 createkeyboard(struct wlr_input_device *device)
 {
-	Keyboard *kb = device->data = ecalloc(1, sizeof(*kb));
+	struct xkb_context *context;
+    struct xkb_keymap *keymap;
+	Keyboard *kb;
+
+    kb = device->data = ecalloc(1, sizeof(*kb));
 	kb->device = device;
 
 	/* Prepare an XKB keymap and assign it to the keyboard. */
-	struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-	struct xkb_keymap *keymap = xkb_map_new_from_names(context, &xkb_rules,
+
+    context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+	keymap = xkb_map_new_from_names(context, &xkb_rules,
 			XKB_KEYMAP_COMPILE_NO_FLAGS);
 
 	wlr_keyboard_set_keymap(kb->device->keyboard, keymap);
@@ -1475,7 +1480,7 @@ grid(Monitor *m) {
 static void
 bstack(Monitor *m)
 {
-	int w, h, mh, mx, tx, ty, tw, ie = enablegaps;
+	int w, h, mh, mx, tx, ty, tw;
 	unsigned int i, n = 0;
 	Client *c;
 
