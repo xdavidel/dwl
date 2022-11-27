@@ -81,10 +81,10 @@ Those are the applied patches in this fork:
 - [namedscratchpads](https://github.com/djpohly/dwl/wiki/namedscratchpads)
   Allows for the creation of multiple scratchpad windows, each assigned
   to a different keybinding.
-- (movestack)[https://github.com/djpohly/dwl/wiki/movestack]
+- [movestack](https://github.com/djpohly/dwl/wiki/movestack)
   Allows you to move a window up and down the stack.
-
-
+- [pertag](https://github.com/djpohly/dwl/wiki/pertag)
+  This patch keeps layout, mwfact and nmaster per tag.
 
 
 ## Building dwl
