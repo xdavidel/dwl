@@ -1564,14 +1564,17 @@ bstackhoriz(Monitor *m) {
 void
 gaplessgrid(Monitor *m)
 {
-	unsigned int n = 0, i = 0, ch, cw, cn, rn, rows, cols;
+	unsigned int n = 0, i = 0, ch, cw, cn, rn, rows, cols, draw_borders = 1;
+    int oh, ov, ih, iv;
 	Client *c;
 
-	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating)
-			n++;
+    getgaps(m, &oh, &ov, &ih, &iv, &n);
 	if (n == 0)
 		return;
+
+    if (n == smartborders) {
+        draw_borders = 0;
+    }
 
 	/* grid dimensions */
 	for (cols = 0; cols <= (n / 2); cols++)
@@ -1583,7 +1586,7 @@ gaplessgrid(Monitor *m)
 	rows = n / cols;
 
 	/* window geometries */
-	cw = cols ? m->w.width / cols : m->w.width;
+	cw = (m->w.width - 2 * ov - iv * (cols - 1)) / (cols ? cols : 1);
 	cn = 0; /* current column number */
 	rn = 0; /* current row number */
 	wl_list_for_each(c, &clients, link) {
@@ -1593,11 +1596,11 @@ gaplessgrid(Monitor *m)
 
 		if ((i / rows + 1) > (cols - n % cols))
 			rows = n / cols + 1;
-		ch = rows ? m->w.height / rows : m->w.height;
-		cx = m->w.x + cn * cw;
-		cy = m->w.y + rn * ch;
+		ch = (m->w.height - 2 * oh - ih * (rows - 1)) / (rows ? rows : 1);
+		cx = m->w.x + cn * (cw + iv) + ov;
+		cy = m->w.y + rn * (ch + ih) + oh;
         resize(c, (struct wlr_box){.x = cx, .y = cy,
-                .width = cw, .height = ch}, 0, 1);
+                .width = cw - 2 * c->bw, .height = ch - 2 * c->bw}, 0, draw_borders);
 		rn++;
 		if (rn >= rows) {
 			rn = 0;
@@ -3315,6 +3318,29 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-s startup command]", argv[0]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

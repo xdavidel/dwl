@@ -158,8 +158,8 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_u,                    setlayout,        {.v = &layouts[1]} },
 	{ MODKEY,                    Key_s,                    setlayout,        {.v = &layouts[2]} },
     { MODKEY|WLR_MODIFIER_SHIFT, Key_s,                    setlayout,        {.v = &layouts[3]} },
-	{ MODKEY,                    Key_g,                    setlayout,        {.v = &layouts[4]} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_g,                    setlayout,        {.v = &layouts[7]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_g,                    setlayout,        {.v = &layouts[4]} },
+	{ MODKEY,                    Key_g,                    setlayout,        {.v = &layouts[7]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_t,                    setlayout,        {.v = &layouts[5]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_u,                    setlayout,        {.v = &layouts[6]} },
    	{ MODKEY|WLR_MODIFIER_CTRL,  Key_comma,                cyclelayout,      {.i = -1 } },
@@ -227,4 +227,5 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
+
 
