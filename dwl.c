@@ -65,6 +65,7 @@
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define LISTEN(E, L, H)         wl_signal_add((E), ((L)->notify = (H), (L)))
 #define WIDTH(X)                ((X)->geom.width + 2 * (X)->bw)
+#define HEIGHT(X)               ((X)->geom.height + 2 * (X)->bw)
 
 /* enums */
 enum { CurNormal, CurPressed, CurMove, CurResize }; /* cursor */
@@ -1528,42 +1529,50 @@ bstack(Monitor *m)
 
 static void
 bstackhoriz(Monitor *m) {
-	int w, mh, mx, tx, ty, th;
-	unsigned int i, n = 0;
+	unsigned int i, n, draw_borders = 1;
+	int oh, ov, ih, iv;
+	int mx = 0, my = 0, mh = 0, mw = 0;
+	int sx = 0, sy = 0, sh = 0, sw = 0;
 	Client *c;
 
-	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating)
-			n ++;
+	getgaps(m, &oh, &ov, &ih, &iv, &n);
 	if (n == 0)
 		return;
 
-	if (n > m->nmaster) {
-		mh = m->nmaster ? m->mfact * m->w.height : 0;
-		th = (m->w.height - mh) / (n - m->nmaster);
-		ty = m->w.y + mh;
-	} else {
-		th = mh = m->w.height;
-		ty = m->w.y;
+    if (n == smartborders) {
+        draw_borders = 0;
+    }
+
+	sx = mx = m->w.x + ov;
+	sy = my = m->w.y + oh;
+	mh = m->w.height - 2*oh;
+	sh = m->w.height - 2*oh - ih * (n - m->nmaster - 1);
+	mw = m->w.width - 2*ov - iv * (MIN(n, m->nmaster) - 1);
+	sw = m->w.width - 2*ov;
+
+	if (m->nmaster && n > m->nmaster) {
+		sh = (mh - ih) * (1 - m->mfact);
+		mh = mh - ih - sh;
+		sy = my + mh + ih;
+		sh = m->w.height - mh - 2*oh - ih * (n - m->nmaster);
 	}
 
-	i = mx = 0;
-	tx = m-> w.x;
+    i = 0;
 	wl_list_for_each(c, &clients, link) {
 		if (!VISIBLEON(c,m) || c->isfloating)
 			continue;
 		if (i < m->nmaster) {
-			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
-            resize(c, (struct wlr_box){.x = m->w.x + mx, .y = m->w.y,
-                    .width = w - (2 * c->bw), .height = mh - (2 * c->bw)}, 0, 1);
-			mx += c->geom.width;
+            resize(c, (struct wlr_box){.x = mx, .y = my,
+                    .width = mw / MIN(n, m->nmaster) - (2 * c->bw),
+                    .height = mh - (2 * c->bw)}, 0, draw_borders);
+			mx += WIDTH(c) + iv;
 		} else {
-            resize(c, (struct wlr_box){.x = tx, .y = ty,
-                    .width = m->w.width - (2 * c->bw), .height = th - (2 * c->bw)}, 0, 1);
-			if (th != m->w.height)
-				ty += c->geom.height;
+            resize(c, (struct wlr_box){.x = sx, .y = sy,
+                    .width = sw - (2 * c->bw),
+                    .height = sh / (n - MIN(n, m->nmaster)) - (2 * c->bw)}, 0, draw_borders);
+			sy += HEIGHT(c) + ih;
 		}
-		i++;
+        i++;
 	}
 }
 
@@ -3327,6 +3336,43 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-s startup command]", argv[0]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
