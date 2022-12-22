@@ -2820,19 +2820,22 @@ tile(Monitor *m)
 
 static void
 fibonacci(Monitor *m, int s) {
-	unsigned int i=0, n=0, nx, ny, nw, nh;
+	unsigned int i=0, n=0, nx, ny, nw, nh, draw_borders = 1;
+    int oh, ov, ih, iv;
 	Client *c;
 
-	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating)
-			n++;
+    getgaps(m, &oh, &ov, &ih, &iv, &n);
 	if(n == 0)
 		return;
 
-	nx = m->w.x;
-	ny = 0;
-	nw = m->w.width;
-	nh = m->w.height;
+    if (n == smartborders) {
+        draw_borders = 0;
+    }
+
+	nx = m->w.x + ov;
+	ny = oh;
+	nw = m->w.width - 2 * ov;
+	nh = m->w.height - 2 * oh;
 
 	wl_list_for_each(c, &clients, link)
 		if (VISIBLEON(c, m) && !c->isfloating){
@@ -2840,42 +2843,42 @@ fibonacci(Monitor *m, int s) {
 		   || (!(i % 2) && nw / 2 > 2 * c->bw)) {
 			if(i < n - 1) {
 				if(i % 2)
-					nh /= 2;
+					nh = (nh - ih) / 2;
 				else
-					nw /= 2;
+					nw = (nw - iv) / 2;
 				if((i % 4) == 2 && !s)
-					nx += nw;
+					nx += nw + iv;
 				else if((i % 4) == 3 && !s)
-					ny += nh;
+					ny += nh + ih;
 			}
 			if((i % 4) == 0) {
 				if(s)
-					ny += nh;
+					ny += nh + ih;
 				else
-					ny -= nh;
+					ny -= nh + ih;
 			}
 			else if((i % 4) == 1)
-				nx += nw;
+				nx += nw + iv;
 			else if((i % 4) == 2)
-				ny += nh;
+				ny += nh + ih;
 			else if((i % 4) == 3) {
 				if(s)
-					nx += nw;
+					nx += nw + iv;
 				else
-					nx -= nw;
+					nx -= nw + iv;
 			}
 			if(i == 0)
 			{
 				if(n != 1)
-					nw = m->w.width * m->mfact;
-				ny = m->w.y;
+					nw = (m->w.width - 2 * ov - iv) * m->mfact;
+				ny = m->w.y + oh;
 			}
 			else if(i == 1)
-				nw = m->w.width - nw;
+				nw = m->w.width - nw - iv - 2 * ov;
 			i++;
 		}
 		resize(c, (struct wlr_box){.x = nx, .y = ny,
-			.width = nw - 2 * c->bw, .height = nh - 2 * c->bw}, 0, 1);
+			.width = nw - (2 * c->bw), .height = nh - (2 * c->bw)}, 0, draw_borders);
 	}
 }
 
@@ -3318,6 +3321,24 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-s startup command]", argv[0]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
