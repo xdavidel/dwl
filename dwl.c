@@ -417,6 +417,24 @@ struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 static pid_t *autostart_pids;
 static size_t autostart_len;
 
+void getgaps(Monitor *m, int *oh, int *ov, int *ih, int *iv, unsigned int *nc) {
+    unsigned int n = 0, oe = enablegaps, ie = enablegaps;
+    Client *c;
+
+    wl_list_for_each(c, &clients, link)
+    if (VISIBLEON(c, m) && !c->isfloating)
+        n++;
+    if (smartgaps && n == 1) {
+        oe = 0; // outer gaps disabled when only one client
+    }
+
+    *oh = m->gappoh * oe; // outer horizontal gap
+    *ov = m->gappov * oe; // outer vertical gap
+    *ih = m->gappih * ie; // inner horizontal gap
+    *iv = m->gappiv * ie; // inner vertical gap
+    *nc = n;              // number of clients
+}
+
 /* function implementations */
 void
 applybounds(Client *c, struct wlr_box *bbox)
@@ -1421,36 +1439,39 @@ hidecursor(void *data)
 
 void
 grid(Monitor *m) {
-    unsigned int n = 0, i = 0, ch, cw, rows, cols;
+    unsigned int i, n, cx, cy, cw, ch, cols, rows, draw_borders = 1;
+    int oh, ov, ih, iv;
     Client *c;
 
-    wl_list_for_each(c, &clients, link)
-        if (VISIBLEON(c, m) && !c->isfloating)
-            n++;
+    getgaps(m, &oh, &ov, &ih, &iv, &n);
+
     if (n == 0)
         return;
 
+    if (n == smartborders) {
+        draw_borders = 0;
+    }
+
     /* grid dimensions */
-    for (rows = 0; rows <= (n / 2); rows++)
-        if ((rows * rows) >= n)
+    for (rows = 0; rows <= n / 2; rows++)
+        if (rows * rows >= n)
             break;
-    cols = (rows && ((rows - 1) * rows) >= n) ? rows - 1 : rows;
+
+    cols = (rows && (rows - 1) * rows >= n) ? rows - 1 : rows;
 
     /* window geoms (cell height/width) */
-    ch = m->w.height / (rows ? rows : 1);
-    cw = m->w.width / (cols ? cols : 1);
+    ch = (m->w.height - 2 * oh - ih * (rows - 1)) / (rows ? rows : 1);
+    cw = (m->w.width - 2 * ov - iv * (cols - 1)) / (cols ? cols : 1);
+
+    i = 0;
     wl_list_for_each(c, &clients, link) {
-        unsigned int cx, cy, ah, aw;
         if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
             continue;
 
-        cx = m->w.x + (i / rows) * cw;
-        cy = m->w.y + (i % rows) * ch;
-        /* adjust height/width of last row/column's windows */
-        ah = (((i + 1) % rows) == 0) ? m->w.height - ch * rows : 0;
-        aw = (i >= (rows * (cols - 1))) ? m->w.width - cw * cols : 0;
+        cx = m->w.x + (i / rows) * (cw + iv) + ov;
+        cy = m->w.y + (i % rows) * (ch + ih) + oh;
         resize(c, (struct wlr_box){.x = cx, .y = cy,
-                .width = cw - aw, .height = ch - ah}, 0, 1);
+                .width = cw - 2 * c->bw, .height = ch - 2 * c->bw}, 0, draw_borders);
         i++;
     }
 }
@@ -3294,4 +3315,34 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-s startup command]", argv[0]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
