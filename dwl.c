@@ -257,12 +257,12 @@ static void handlecursoractivity(bool restore_focus);
 static int hidecursor(void *data);
 static void incnmaster(const Arg *arg);
 static void incgaps(const Arg *arg);
-static void incigaps(const Arg *arg);
-static void incihgaps(const Arg *arg);
-static void incivgaps(const Arg *arg);
-static void incogaps(const Arg *arg);
-static void incohgaps(const Arg *arg);
-static void incovgaps(const Arg *arg);
+// static void incigaps(const Arg *arg);
+// static void incihgaps(const Arg *arg);
+// static void incivgaps(const Arg *arg);
+// static void incogaps(const Arg *arg);
+// static void incohgaps(const Arg *arg);
+// static void incovgaps(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keycode_t keycode);
 static void keypress(struct wl_listener *listener, void *data);
@@ -1645,6 +1645,7 @@ incgaps(const Arg *arg)
 	);
 }
 
+/*
 void
 incigaps(const Arg *arg)
 {
@@ -1710,6 +1711,7 @@ incovgaps(const Arg *arg)
 		selmon->gappiv
 	);
 }
+*/
 
 void
 inputdevice(struct wl_listener *listener, void *data)
@@ -3336,6 +3338,9 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-s startup command]", argv[0]);
 }
+
+
+
 
 
 
