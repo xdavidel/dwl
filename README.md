@@ -64,6 +64,7 @@ Feature *non-goals* for the main codebase include:
 - autostart - make dwl launch apps on startup and close them on shutdown.
 - desktop - create a desktop entry for dwl.
 - smartborders - only show borders when there is more than one client.
+- vanitygaps - add gaps and more layouts.
 
 ## Building dwl
 
