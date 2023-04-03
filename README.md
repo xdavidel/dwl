@@ -61,6 +61,7 @@ Feature *non-goals* for the main codebase include:
 - center - add rule to auto center clients.
 - namedscratchpads - create scratchpads by app title.
 - sticky - make a client follow any tag.
+- autostart - make dwl launch apps on startup and close them on shutdown.
 
 ## Building dwl
 
