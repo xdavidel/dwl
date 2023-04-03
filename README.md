@@ -47,9 +47,13 @@ Feature *non-goals* for the main codebase include:
   be done through the compositor
 - Animations and visual effects
 
+## Patches
+
+- keycode - use key code for bindings instead of key symbols.
+
 ## Building dwl
 
-dwl has only two dependencies: `wlroots` and `wayland-protocols`. 
+dwl has only two dependencies: `wlroots` and `wayland-protocols`.
 
 Simply install these (and their `-devel` versions if your distro has separate
 development packages) and run `make`.  If you wish to build against a Git
