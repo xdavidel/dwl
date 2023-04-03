@@ -117,6 +117,7 @@ static const Key keys[] = {
 	/* modifier                  key          function        argument */
 	{ MODKEY,                    Key_p,       spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
+	{ MODKEY,                    Key_b,       toggle_visibility, {0}},
 	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
 	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_j,       movestack,      {.i = +1} },

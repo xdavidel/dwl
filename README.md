@@ -56,6 +56,7 @@ Feature *non-goals* for the main codebase include:
 - focusMonPointer - move the cursor to a newly focused monitor.
 - type_hide - hide the cursor when typing.
 - pertag - remember layouts setup for each tag.
+- ipc - simple ipc capabilities that allows controlling dwl from external apps (bars, etc.)
 
 ## Building dwl
 
