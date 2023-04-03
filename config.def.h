@@ -145,6 +145,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                    Key_space,   setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
+	{ MODKEY,                    Key_s,       togglesticky,   {0} },
 	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
 	{ MODKEY,                    Key_0,       view,           {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,            {.ui = ~0} },

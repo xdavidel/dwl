@@ -60,6 +60,7 @@ Feature *non-goals* for the main codebase include:
 - shiftview - move between tags with keybindings.
 - center - add rule to auto center clients.
 - namedscratchpads - create scratchpads by app title.
+- sticky - make a client follow any tag.
 
 ## Building dwl
 
