@@ -69,9 +69,9 @@ LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN
 static const enum libinput_config_scroll_method scroll_method = LIBINPUT_CONFIG_SCROLL_2FG;
 
 /* You can choose between:
-LIBINPUT_CONFIG_CLICK_METHOD_NONE       
-LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS       
-LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER 
+LIBINPUT_CONFIG_CLICK_METHOD_NONE
+LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS
+LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER
 */
 static const enum libinput_config_click_method click_method = LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
 
@@ -117,6 +117,8 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
 	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
 	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_j,       movestack,      {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,       movestack,      {.i = -1} },
 	{ MODKEY,                    Key_i,       incnmaster,     {.i = +1} },
 	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
 	{ MODKEY,                    Key_h,       setmfact,       {.f = -0.05} },

@@ -52,6 +52,7 @@ Feature *non-goals* for the main codebase include:
 - keycode - use key code for bindings instead of key symbols.
 - numlock - enable numlock / capslock on startup.
 - attachbottom - new clients will be added to the bottom of the stack.
+- shiftview - move a client in the stack.
 
 ## Building dwl
 
