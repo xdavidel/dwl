@@ -57,6 +57,7 @@ Feature *non-goals* for the main codebase include:
 - type_hide - hide the cursor when typing.
 - pertag - remember layouts setup for each tag.
 - ipc - simple ipc capabilities that allows controlling dwl from external apps (bars, etc.)
+- shiftview - move between tags with keybindings.
 
 ## Building dwl
 

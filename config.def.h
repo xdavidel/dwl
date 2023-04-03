@@ -112,6 +112,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 static const char *termcmd[] = { "foot", NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
 
+#include "shiftview.c"
 #include "keys.h"
 static const Key keys[] = {
 	/* modifier                  key          function        argument */
@@ -128,6 +129,8 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05} },
 	{ MODKEY,                    Key_Return,  zoom,           {0} },
 	{ MODKEY,                    Key_Tab,     view,           {0} },
+	{ MODKEY,                    Key_a,          shiftview,      { .i = -1 } },
+	{ MODKEY,                    Key_semicolon,  shiftview,      { .i = 1 } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
 	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[1]} },
