@@ -53,6 +53,7 @@ Feature *non-goals* for the main codebase include:
 - numlock - enable numlock / capslock on startup.
 - attachbottom - new clients will be added to the bottom of the stack.
 - shiftview - move a client in the stack.
+- focusMonPointer - move the cursor to a newly focused monitor.
 
 ## Building dwl
 

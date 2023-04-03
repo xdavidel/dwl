@@ -1079,7 +1079,7 @@ createpointer(struct wlr_pointer *pointer)
 
 		if (libinput_device_config_scroll_get_methods(libinput_device) != LIBINPUT_CONFIG_SCROLL_NO_SCROLL)
 			libinput_device_config_scroll_set_method (libinput_device, scroll_method);
-		
+
 		if (libinput_device_config_click_get_methods(libinput_device) != LIBINPUT_CONFIG_CLICK_METHOD_NONE)
 			libinput_device_config_click_set_method (libinput_device, click_method);
 
@@ -1306,11 +1306,15 @@ void
 focusmon(const Arg *arg)
 {
 	int i = 0, nmons = wl_list_length(&mons);
+	Monitor *prevm;
+
+    prevm = selmon;
 	if (nmons)
 		do /* don't switch to disabled mons */
 			selmon = dirtomon(arg->i);
 		while (!selmon->wlr_output->enabled && i++ < nmons);
 	focusclient(focustop(selmon), 1);
+	wlr_cursor_move(cursor, NULL, selmon->m.x - prevm->m.x , 0);
 }
 
 void
