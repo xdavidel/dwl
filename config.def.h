@@ -12,12 +12,15 @@ static const int hide_type = 1;
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
+#define SCRATCHPAD_TITLE "xyzscratchpadxyz"
+
 static const Rule rules[] = {
-	/* app_id     title       tags mask  iscentered  isfloating  monitor */
+	/* app_id     title              tags mask  iscentered  isfloating  monitor  scratchkey */
 	/* examples:
-	{ "Gimp",     NULL,       0,         0,          1,          -1 },
+	{ "Gimp",     NULL,              0,         0,          1,          -1,      0},
 	*/
-	{ "firefox",  NULL,       1 << 8,    0,          1,          -1 },
+	{ "firefox",  NULL,              1 << 8,    0,          1,          -1,      0 },
+	{ NULL,       SCRATCHPAD_TITLE,  0,         1,          1,          -1,     's' },
 };
 
 /* layout(s) */
@@ -112,12 +115,17 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 static const char *termcmd[] = { "foot", NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
 
+/* named scratchpads - First arg only serves to match against key in rules*/
+static const char *scratchpadcmd[] = { "s", "alacritty", "-t", SCRATCHPAD_TITLE, NULL };
+
+
 #include "shiftview.c"
 #include "keys.h"
 static const Key keys[] = {
 	/* modifier                  key          function        argument */
 	{ MODKEY,                    Key_p,       spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
+	{ MODKEY,                    Key_grave,   togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                    Key_b,       toggle_visibility, {0}},
 	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
 	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },

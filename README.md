@@ -59,6 +59,7 @@ Feature *non-goals* for the main codebase include:
 - ipc - simple ipc capabilities that allows controlling dwl from external apps (bars, etc.)
 - shiftview - move between tags with keybindings.
 - center - add rule to auto center clients.
+- namedscratchpads - create scratchpads by app title.
 
 ## Building dwl
 
