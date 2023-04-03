@@ -6,6 +6,7 @@ PKG_CONFIG = pkg-config
 # paths
 PREFIX = /usr/local
 MANDIR = $(PREFIX)/share/man
+DESKTOP?= /usr/share/wayland-sessions
 
 XWAYLAND =
 XLIBS =
