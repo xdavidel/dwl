@@ -54,6 +54,7 @@ Feature *non-goals* for the main codebase include:
 - attachbottom - new clients will be added to the bottom of the stack.
 - shiftview - move a client in the stack.
 - focusMonPointer - move the cursor to a newly focused monitor.
+- type_hide - hide the cursor when typing.
 
 ## Building dwl
 
