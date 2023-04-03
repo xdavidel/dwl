@@ -50,6 +50,7 @@ Feature *non-goals* for the main codebase include:
 ## Patches
 
 - keycode - use key code for bindings instead of key symbols.
+- numlock - enable numlock / capslock on startup.
 
 ## Building dwl
 
