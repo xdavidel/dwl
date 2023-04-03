@@ -55,6 +55,7 @@ Feature *non-goals* for the main codebase include:
 - shiftview - move a client in the stack.
 - focusMonPointer - move the cursor to a newly focused monitor.
 - type_hide - hide the cursor when typing.
+- pertag - remember layouts setup for each tag.
 
 ## Building dwl
 
