@@ -19,6 +19,14 @@ static const int hide_type = 1;
 /* Autostart */
 static const char *const autostart[] = {
         "dwl-bar", NULL,
+        "setbg", NULL,
+        "nm-applet", " --indicator", NULL,
+        "blueman-applet", NULL,
+        "dunst", NULL,
+        "kanshi", NULL,
+        "clipmgr", "-t", NULL,
+        "idledaemon", NULL,
+        "xdg-user-dirs-update", NULL,
         NULL /* terminate */
 };
 
@@ -31,8 +39,9 @@ static const Rule rules[] = {
 	/* app_id     title              tags mask  iscentered  isfloating  monitor  scratchkey */
 	/* examples:
 	{ "Gimp",     NULL,              0,         0,          1,          -1,      0},
-	*/
 	{ "firefox",  NULL,              1 << 8,    0,          1,          -1,      0 },
+	*/
+	{ NULL,       "Media viewer",    0,         0,          1,          -1,      0  },
 	{ NULL,       SCRATCHPAD_TITLE,  0,         1,          1,          -1,     's' },
 };
 
@@ -66,15 +75,17 @@ static const struct xkb_rule_names xkb_rules = {
 	/* example:
 	.options = "ctrl:nocaps",
 	*/
-	.options = NULL,
+    .layout = "us,il",
+    .options = "grp:alt_shift_toggle",
+	// .options = NULL,
 };
 
 /* numlock and capslock */
 static const int numlock = 1;
 static const int capslock = 0;
 
-static const int repeat_rate = 25;
-static const int repeat_delay = 600;
+static const int repeat_rate = 50;
+static const int repeat_delay = 300;
 
 /* Trackpad */
 static const int tap_to_click = 1;
@@ -119,7 +130,7 @@ LIBINPUT_CONFIG_TAP_MAP_LMR -- 1/2/3 finger tap maps to left/middle/right
 static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TAP_MAP_LRM;
 
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
-#define MODKEY WLR_MODIFIER_ALT
+#define MODKEY WLR_MODIFIER_LOGO
 
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
@@ -130,10 +141,6 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-/* commands */
-static const char *termcmd[] = { "foot", NULL };
-static const char *menucmd[] = { "bemenu-run", NULL };
-
 /* named scratchpads - First arg only serves to match against key in rules*/
 static const char *scratchpadcmd[] = { "s", "alacritty", "-t", SCRATCHPAD_TITLE, NULL };
 
@@ -141,59 +148,48 @@ static const char *scratchpadcmd[] = { "s", "alacritty", "-t", SCRATCHPAD_TITLE,
 #include "shiftview.c"
 #include "keys.h"
 static const Key keys[] = {
-	/* modifier                  key          function        argument */
-	{ MODKEY,                    Key_p,       spawn,          {.v = menucmd} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
-	{ MODKEY,                    Key_grave,   togglescratch,  {.v = scratchpadcmd } },
-	{ MODKEY,                    Key_b,       toggle_visibility, {0}},
-	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
-	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_j,       movestack,      {.i = +1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,       movestack,      {.i = -1} },
-	{ MODKEY,                    Key_i,       incnmaster,     {.i = +1} },
-	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
-	{ MODKEY,                    Key_h,       setmfact,       {.f = -0.05} },
-	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05} },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_h,          incgaps,       {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_l,          incgaps,       {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   Key_h,      incogaps,      {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   Key_l,      incogaps,      {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_CTRL,    Key_h,      incigaps,      {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_CTRL,    Key_l,      incigaps,      {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_0,          togglegaps,     {0} },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   Key_parenright,defaultgaps,    {0} },
-	{ MODKEY,                    Key_y,          incihgaps,     {.i = +1 } },
-	{ MODKEY,                    Key_o,          incihgaps,     {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_CTRL,  Key_y,          incivgaps,     {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_CTRL,  Key_o,          incivgaps,     {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_y,          incohgaps,     {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  Key_o,          incohgaps,     {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_y,          incovgaps,     {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_o,          incovgaps,     {.i = -1 } },
-	{ MODKEY,                    Key_Return,  zoom,           {0} },
-	{ MODKEY,                    Key_Tab,     view,           {0} },
-	{ MODKEY,                    Key_a,          shiftview,      { .i = -1 } },
-	{ MODKEY,                    Key_semicolon,  shiftview,      { .i = 1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
-	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_t,       setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_m,       setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                    Key_n,       setlayout,      {.v = &layouts[4]} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_n,       setlayout,      {.v = &layouts[5]} },
-	{ MODKEY,                    Key_g,       setlayout,      {.v = &layouts[6]} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_g,       setlayout,      {.v = &layouts[7]} },
-	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[8]} },
-	{ MODKEY,                    Key_space,   setlayout,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
-	{ MODKEY,                    Key_s,       togglesticky,   {0} },
-	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
-	{ MODKEY,                    Key_0,       view,           {.ui = ~0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,            {.ui = ~0} },
-	{ MODKEY,                    Key_comma,   focusmon,       {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    Key_period,  focusmon,       {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_comma,   tagmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_period,  tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	/* modifier                  key                       function           argument */
+	{ MODKEY,                    Key_slash,                spawn,             SHCMD("menulauncher") },
+	{ MODKEY,                    Key_Return,               spawn,             SHCMD("$TERMINAL") },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_Return,               togglescratch,     {.v = scratchpadcmd } },
+	{ MODKEY,                    Key_b,                    toggle_visibility, {0}},
+	{ MODKEY,                    Key_Down,                 focusstack,        {.i = +1} },
+	{ MODKEY,                    Key_Up,                   focusstack,        {.i = -1} },
+	{ MODKEY,                    Key_j,                    focusstack,        {.i = +1} },
+	{ MODKEY,                    Key_k,                    focusstack,        {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Down,                 movestack,         {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Up,                   movestack,         {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_j,                    movestack,         {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,                    movestack,         {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_Left,                 setmfact,          {.f = -0.05} },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_Right,                setmfact,          {.f = +0.05} },
+	{ MODKEY,                    Key_o,                    incgaps,           {.i = +3 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_o,                    incgaps,           {.i = -3 } },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_o,                    togglegaps,        {0} },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_o,                    defaultgaps,       {0} },
+	{ MODKEY,                    Key_space,                zoom,              {0} },
+	{ MODKEY,                    Key_Tab,                  view,              {0} },
+	{ WLR_MODIFIER_ALT,          Key_Tab,                  view,              {0} },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Left,                 shiftview,         {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  Key_Right,                shiftview,         {.i = 1 } },
+	{ MODKEY,                    Key_q,                    killclient,        {0} },
+	{ MODKEY,                    Key_t,                    setlayout,         {.v = &layouts[0]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_t,                    setlayout,         {.v = &layouts[1]} },
+	{ MODKEY,                    Key_u,                    setlayout,         {.v = &layouts[2]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_u,                    setlayout,         {.v = &layouts[3]} },
+	{ MODKEY,                    Key_s,                    setlayout,         {.v = &layouts[4]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_s,                    setlayout,         {.v = &layouts[5]} },
+	{ MODKEY,                    Key_g,                    setlayout,         {.v = &layouts[6]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_g,                    setlayout,         {.v = &layouts[7]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,                    togglefloating,    {0} },
+	{ MODKEY,                    Key_y,                    togglesticky,      {0} },
+	{ MODKEY,                    Key_f,                    togglefullscreen,  {0} },
+	{ MODKEY,                    Key_0,                    view,              {.ui = ~0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,                    tag,               {.ui = ~0} },
+	{ MODKEY,                    Key_Left,                 focusmon,          {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                    Key_Right,                focusmon,          {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Left,                 tagmon,            {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Right,                tagmon,            {.i = WLR_DIRECTION_RIGHT} },
 	TAGKEYS(                     Key_1,                       0),
 	TAGKEYS(                     Key_2,                       1),
 	TAGKEYS(                     Key_3,                       2),
@@ -203,7 +199,36 @@ static const Key keys[] = {
 	TAGKEYS(                     Key_7,                       6),
 	TAGKEYS(                     Key_8,                       7),
 	TAGKEYS(                     Key_9,                       8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_q,       quit,           {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_e,                    quit,              {0} },
+	{ MODKEY,                    Key_e,                    spawn,             SHCMD("$FILEGUI") },
+	{ MODKEY,                    Key_n,                    spawn,             SHCMD("$TERMINAL -e newsboat && refbar news") },
+	{ MODKEY,                    Key_i,                    spawn,             SHCMD("$TERMINAL -e htop") },
+	{ MODKEY,                    Key_a,                    spawn,             SHCMD("$TERMINAL dmc control") },
+	{ MODKEY,                    Key_w,                    spawn,             SHCMD("$BROWSER") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_w,                    spawn,             SHCMD("$BROWSERP") },
+	{ MODKEY,                    Key_semicolon,            spawn,             SHCMD("menurepo $HOME/.local/repo/emoji") },
+	{ MODKEY,                    Key_grave,                spawn,             SHCMD("menurepo $HOME/.local/repo/font-awesome-list") },
+	{ MODKEY,                    Key_x,                    spawn,             SHCMD("lockscreen") },
+	{ MODKEY,                    Key_p,                    spawn,             SHCMD("dmc pause") },
+	{ MODKEY,                    Key_comma,                spawn,             SHCMD("dmc prev") },
+	{ MODKEY,                    Key_period,               spawn,             SHCMD("dmc next") },
+	{ MODKEY,                    Key_bracketleft,          spawn,             SHCMD("dmc backward 5") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_bracketleft,          spawn,             SHCMD("dmc backward 5") },
+	{ MODKEY,                    Key_bracketright,         spawn,             SHCMD("dmc forward 5") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_bracketright,         spawn,             SHCMD("dmc forward 5") },
+	{ MODKEY,                    Key_minus,                spawn,             SHCMD("dmc down 5") },
+	{ MODKEY,                    Key_equal,                spawn,             SHCMD("dmc up 5") },
+	{ MODKEY,                    Key_m,                    spawn,             SHCMD("dmc toggle") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_m,                    spawn,             SHCMD("mediaplayer") },
+	{ MODKEY,                    Key_F3,                   spawn,             SHCMD("wdisplays") },
+	{ MODKEY,                    Key_F12,                  spawn,             SHCMD("$TERMINAL -e nmtui") },
+	{ MODKEY,                    Key_XF86AudioPause,       spawn,             SHCMD("dmc pause") },
+	{ MODKEY,                    Key_XF86AudioPrev,        spawn,             SHCMD("dmc prev") },
+	{ MODKEY,                    Key_XF86AudioNext,        spawn,             SHCMD("dmc next") },
+	{ MODKEY,                    Key_XF86AudioLowerVolume, spawn,             SHCMD("dmc down") },
+	{ MODKEY,                    Key_XF86AudioRaiseVolume, spawn,             SHCMD("dmc up") },
+	{ MODKEY,                    Key_XF86AudioMute,        spawn,             SHCMD("dmc toggle") },
+	{ MODKEY,                    Key_XF86AudioPlay,        spawn,             SHCMD("dmc play") },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,Key_BackSpace, quit, {0} },
