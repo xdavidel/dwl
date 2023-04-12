@@ -18,7 +18,7 @@ static const int hide_type = 1;
 
 /* Autostart */
 static const char *const autostart[] = {
-        "dwl-bar", NULL,
+        "waybar", NULL,
         "setbg", NULL,
         "nm-applet", " --indicator", NULL,
         "blueman-applet", NULL,
