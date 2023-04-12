@@ -70,7 +70,7 @@
 #define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags] || (C)->issticky))
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define END(A)                  ((A) + LENGTH(A))
-#define TAGMASK                 ((1 << LENGTH(tags)) - 1)
+#define TAGMASK                 ((1u << tagcount) - 1)
 #define LISTEN(E, L, H)         wl_signal_add((E), ((L)->notify = (H), (L)))
 #define WIDTH(X)                ((X)->geom.width + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->geom.height + 2 * (X)->bw)
@@ -87,7 +87,7 @@ enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 
 typedef union {
 	int i;
-	unsigned int ui;
+	uint32_t ui;
 	float f;
 	const void *v;
 } Arg;
@@ -129,7 +129,7 @@ typedef struct {
 	struct wl_listener set_hints;
 #endif
 	unsigned int bw;
-	unsigned int tags;
+	uint32_t tags;
 	int iscentered, isfloating, isurgent, isfullscreen, issticky;
 	char scratchkey;
 	uint32_t resize; /* configure serial of a pending resize */
@@ -205,7 +205,7 @@ struct Monitor {
 	Pertag *pertag;
 	unsigned int seltags;
 	unsigned int sellt;
-	unsigned int tagset[2];
+	uint32_t tagset[2];
 	double mfact;
 	int nmaster;
 	char ltsymbol[16];
@@ -224,7 +224,7 @@ typedef struct {
 typedef struct {
 	const char *id;
 	const char *title;
-	unsigned int tags;
+	uint32_t tags;
 	int iscentered;
 	int isfloating;
 	int monitor;
@@ -336,7 +336,7 @@ static void setfullscreen(Client *c, int fullscreen);
 static void setgaps(int oh, int ov, int ih, int iv);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
-static void setmon(Client *c, Monitor *m, unsigned int newtags);
+static void setmon(Client *c, Monitor *m, uint32_t newtags);
 static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
 static void setup(void);
@@ -472,14 +472,11 @@ static Atom netatom[NetLast];
 
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */
-	int nmasters[LENGTH(tags) + 1]; /* number of windows in master area */
-	float mfacts[LENGTH(tags) + 1]; /* mfacts per tag */
-	unsigned int sellts[LENGTH(tags) + 1]; /* selected layouts */
-	const Layout *ltidxs[LENGTH(tags) + 1][2]; /* matrix of tags and layouts indexes  */
+	int nmasters[tagcount + 1]; /* number of windows in master area */
+	float mfacts[tagcount + 1]; /* mfacts per tag */
+	unsigned int sellts[tagcount + 1]; /* selected layouts */
+	const Layout *ltidxs[tagcount + 1][2]; /* matrix of tags and layouts indexes  */
 };
-
-/* compile-time check if all tags fit into an unsigned int bit array. */
-struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
 static pid_t *autostart_pids;
 static size_t autostart_len;
@@ -535,7 +532,7 @@ applyrules(Client *c)
 {
 	/* rule matching */
 	const char *appid, *title;
-	unsigned int i, newtags = 0;
+	uint32_t i, newtags = 0;
 	const Rule *r;
 	Monitor *mon = selmon, *m;
 
@@ -1127,7 +1124,7 @@ createmon(struct wl_listener *listener, void *data)
 	m->pertag = calloc(1, sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
 
-	for (i = 0; i <= LENGTH(tags); i++) {
+	for (i = 0; i <= tagcount; i++) {
 		m->pertag->nmasters[i] = m->nmaster;
 		m->pertag->mfacts[i] = m->mfact;
 
@@ -1404,8 +1401,8 @@ dwl_manager_bind(struct wl_client *client, void *data, uint32_t version, uint32_
 
 	wl_resource_set_implementation(resource, &dwl_manager_implementation, NULL, dwl_manager_destroy);
 
-	for (i = 0; i < LENGTH(tags); i++) {
-		zdwl_manager_v1_send_tag(resource, tags[i]);
+	for (i = 0; i < tagcount; i++) {
+		zdwl_manager_v1_send_tag(resource, i);
 	}
 
 	for (i = 0; i < LENGTH(layouts); i++) {
@@ -1545,7 +1542,7 @@ dwl_output_printstatus_to(Monitor* monitor, DwlOutput *output)
 	focused = focustop(monitor);
 	zdwl_output_v1_send_active(output->resource, monitor == selmon);
 
-	for ( tag = 0 ; tag < LENGTH(tags); tag++) {
+	for ( tag = 0 ; tag < tagcount; tag++) {
 		numclients = state = focused_client = 0;
 		tagmask = 1 << tag;
 		if ((tagmask & monitor->tagset[monitor->seltags]) != 0)
@@ -2336,7 +2333,7 @@ printstatus(void)
 {
 	Monitor *m = NULL;
 	Client *c;
-	unsigned int occ, urg, sel;
+	uint32_t occ, urg, sel;
 	const char *appid, *title;
 
 	wl_list_for_each(m, &mons, link) {
@@ -2602,7 +2599,7 @@ setmfact(const Arg *arg)
 }
 
 void
-setmon(Client *c, Monitor *m, unsigned int newtags)
+setmon(Client *c, Monitor *m, uint32_t newtags)
 {
 	Monitor *oldmon = c->mon;
 
@@ -3291,7 +3288,7 @@ togglegaps(const Arg *arg)
 void
 toggletag(const Arg *arg)
 {
-	unsigned int newtags;
+	uint32_t newtags;
 	Client *sel = focustop(selmon);
 	if (!sel)
 		return;
@@ -3307,7 +3304,7 @@ toggletag(const Arg *arg)
 void
 toggleview(const Arg *arg)
 {
-	unsigned int newtagset = selmon ? selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK) : 0;
+	uint32_t  newtagset = selmon ? selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK) : 0;
 	size_t i;
 
 	if (newtagset) {

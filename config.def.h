@@ -30,8 +30,8 @@ static const char *const autostart[] = {
         NULL /* terminate */
 };
 
-/* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+/* tagging - tagcount must be no greater than 31 */
+#define tagcount 9
 
 #define SCRATCHPAD_TITLE "xyzscratchpadxyz"
 

@@ -5,7 +5,7 @@ shiftview(const Arg *arg)
 {
 	Arg a;
 	Client *c;
-	size_t ntags = LENGTH(tags);
+	size_t ntags = tagcount;
 	bool visible = false;
 	int i = arg->i;
 	int count = 0;
