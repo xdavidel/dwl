@@ -131,6 +131,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
 #define MODKEY WLR_MODIFIER_LOGO
+#define WLR_MODIFIER_CTRL_SHIFT WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT
 
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
@@ -150,6 +151,7 @@ static const char *scratchpadcmd[] = { "s", "alacritty", "-t", SCRATCHPAD_TITLE,
 static const Key keys[] = {
 	/* modifier                  key                       function           argument */
 	{ MODKEY,                    Key_slash,                spawn,             SHCMD("menulauncher") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_slash,                spawn,             SHCMD("menulauncher -d") },
 	{ MODKEY,                    Key_Return,               spawn,             SHCMD("$TERMINAL") },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_Return,               togglescratch,     {.v = scratchpadcmd } },
 	{ MODKEY,                    Key_b,                    toggle_visibility, {0}},
@@ -220,15 +222,29 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_equal,                spawn,             SHCMD("dmc up 5") },
 	{ MODKEY,                    Key_m,                    spawn,             SHCMD("dmc toggle") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_m,                    spawn,             SHCMD("mediaplayer") },
+	{ MODKEY,                    Key_v,                    spawn,             SHCMD("clipmgr -s") },
+	{ MODKEY,                    Key_F2,                   spawn,             SHCMD("freshscreen") },
 	{ MODKEY,                    Key_F3,                   spawn,             SHCMD("wdisplays") },
+	{ MODKEY,                    Key_F4,                   spawn,             SHCMD("sysact") },
 	{ MODKEY,                    Key_F12,                  spawn,             SHCMD("$TERMINAL -e nmtui") },
-	{ MODKEY,                    Key_XF86AudioPause,       spawn,             SHCMD("dmc pause") },
-	{ MODKEY,                    Key_XF86AudioPrev,        spawn,             SHCMD("dmc prev") },
-	{ MODKEY,                    Key_XF86AudioNext,        spawn,             SHCMD("dmc next") },
-	{ MODKEY,                    Key_XF86AudioLowerVolume, spawn,             SHCMD("dmc down") },
-	{ MODKEY,                    Key_XF86AudioRaiseVolume, spawn,             SHCMD("dmc up") },
-	{ MODKEY,                    Key_XF86AudioMute,        spawn,             SHCMD("dmc toggle") },
-	{ MODKEY,                    Key_XF86AudioPlay,        spawn,             SHCMD("dmc play") },
+	{ MODKEY,                    Key_Insert,               spawn,             SHCMD("$TERMINAL -e notes -n") },
+	{ MODKEY,                    Key_Home,                 spawn,             SHCMD("$TERMINAL -e notes -f") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Home,                 spawn,             SHCMD("$TERMINAL -e notes -g") },
+	{ MODKEY,                    Key_Print,                spawn,             SHCMD("screenshot") },
+	{ 0,                         Key_Print,                spawn,             SHCMD("screenshot -f") },
+	{ WLR_MODIFIER_SHIFT,        Key_Print,                spawn,             SHCMD("screenshot -F") },
+	{ WLR_MODIFIER_CTRL,         Key_Print,                spawn,             SHCMD("screenshot -a") },
+	{ WLR_MODIFIER_CTRL_SHIFT,   Key_Print,                spawn,             SHCMD("screenshot -A") },
+	{ 0,                         Key_XF86MonBrightnessDown,spawn,             SHCMD("brightnessctl s 5%-") },
+	{ 0,                         Key_XF86MonBrightnessUp,  spawn,             SHCMD("brightnessctl s 5%+") },
+	{ 0,                         Key_XF86AudioMicMute,     spawn,             SHCMD("pactl set-source-mute @DEFAULT_SOURCE@ toggle") },
+	{ 0,                         Key_XF86AudioPause,       spawn,             SHCMD("dmc pause") },
+	{ 0,                         Key_XF86AudioPrev,        spawn,             SHCMD("dmc prev") },
+	{ 0,                         Key_XF86AudioNext,        spawn,             SHCMD("dmc next") },
+	{ 0,                         Key_XF86AudioLowerVolume, spawn,             SHCMD("dmc down") },
+	{ 0,                         Key_XF86AudioRaiseVolume, spawn,             SHCMD("dmc up") },
+	{ 0,                         Key_XF86AudioMute,        spawn,             SHCMD("dmc toggle") },
+	{ 0,                         Key_XF86AudioPlay,        spawn,             SHCMD("dmc play") },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,Key_BackSpace, quit, {0} },
