@@ -18,15 +18,7 @@ static const int hide_type = 1;
 
 /* Autostart */
 static const char *const autostart[] = {
-        "waybar", NULL,
-        "setbg", NULL,
-        "nm-applet", " --indicator", NULL,
-        "blueman-applet", NULL,
-        "dunst", NULL,
-        "kanshi", NULL,
-        "clipmgr", "-t", NULL,
-        "idledaemon", NULL,
-        "xdg-user-dirs-update", NULL,
+        "autostart", NULL,
         NULL /* terminate */
 };
 
