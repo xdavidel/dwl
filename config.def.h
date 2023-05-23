@@ -28,13 +28,13 @@ static const char *const autostart[] = {
 #define SCRATCHPAD_TITLE "xyzscratchpadxyz"
 
 static const Rule rules[] = {
-	/* app_id     title              tags mask  iscentered  isfloating  monitor  scratchkey */
+	/* app_id     title              tags mask  iscentered  isfloating  isfullscreen  monitor  scratchkey */
 	/* examples:
-	{ "Gimp",     NULL,              0,         0,          1,          -1,      0},
-	{ "firefox",  NULL,              1 << 8,    0,          1,          -1,      0 },
+	{ "Gimp",     NULL,              0,         0,          1,                        -1,      0},
+	{ "firefox",  NULL,              1 << 8,    0,          1,                        -1,      0 },
 	*/
-	{ NULL,       "Media viewer",    0,         0,          1,          -1,      0  },
-	{ NULL,       SCRATCHPAD_TITLE,  0,         1,          1,          -1,     's' },
+	{ NULL,       "Media viewer",    0,         0,          0,          1,            -1,      0  },
+	{ NULL,       SCRATCHPAD_TITLE,  0,         1,          1,          0,            -1,     's' },
 };
 
 /* layout(s) */
