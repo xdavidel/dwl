@@ -4,7 +4,7 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const int smartgaps                 = 1;  /* 1 means no outer gap when there is only one window */
 static const int monoclegaps               = 0;  /* 1 means outer gaps in monocle layout */
 static const int smartborders              = 1;
-static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const unsigned int borderpx         = 2;  /* border pixel of windows */
 static const unsigned int gappih           = 10; /* horiz inner gap between windows */
 static const unsigned int gappiv           = 10; /* vert inner gap between windows */
 static const unsigned int gappoh           = 10; /* horiz outer gap between windows and screen edge */
@@ -146,7 +146,6 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_slash,                spawn,             SHCMD("menulauncher -d") },
 	{ MODKEY,                    Key_Return,               spawn,             SHCMD("$TERMINAL") },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_Return,               togglescratch,     {.v = scratchpadcmd } },
-	{ MODKEY,                    Key_b,                    toggle_visibility, {0}},
 	{ MODKEY,                    Key_Down,                 focusstack,        {.i = +1} },
 	{ MODKEY,                    Key_Up,                   focusstack,        {.i = -1} },
 	{ MODKEY,                    Key_j,                    focusstack,        {.i = +1} },

@@ -14,11 +14,11 @@ DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CF
 LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
 
 all: dwl
-dwl: dwl.o util.o dwl-bar-ipc-unstable-v1-protocol.o
-	$(CC) dwl.o util.o dwl-bar-ipc-unstable-v1-protocol.o $(LDLIBS) $(LDFLAGS) $(DWLCFLAGS) -o $@
-dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h dwl-bar-ipc-unstable-v1-protocol.h
+dwl: dwl.o util.o dwl-ipc-unstable-v2-protocol.o
+	$(CC) dwl.o util.o dwl-ipc-unstable-v2-protocol.o $(LDLIBS) $(LDFLAGS) $(DWLCFLAGS) -o $@
+dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h dwl-ipc-unstable-v2-protocol.o
 util.o: util.c util.h
-dwl-bar-ipc-unstable-v1-protocol.o: dwl-bar-ipc-unstable-v1-protocol.c dwl-bar-ipc-unstable-v1-protocol.h
+dwl-ipc-unstable-v2-protocol.o: dwl-ipc-unstable-v2-protocol.h
 
 # wayland-scanner is a tool which generates C headers and rigging for Wayland
 # protocols, which are specified in XML. wlroots requires you to rig these up
@@ -32,17 +32,17 @@ xdg-shell-protocol.h:
 wlr-layer-shell-unstable-v1-protocol.h:
 	$(WAYLAND_SCANNER) server-header \
 		protocols/wlr-layer-shell-unstable-v1.xml $@
-dwl-bar-ipc-unstable-v1-protocol.h:
+dwl-ipc-unstable-v2-protocol.h:
 	$(WAYLAND_SCANNER) server-header \
-		protocols/dwl-bar-ipc-unstable-v1.xml $@
-dwl-bar-ipc-unstable-v1-protocol.c:
+		protocols/dwl-ipc-unstable-v2.xml $@
+dwl-ipc-unstable-v2-protocol.c:
 	$(WAYLAND_SCANNER) private-code \
-		protocols/dwl-bar-ipc-unstable-v1.xml $@
+		protocols/dwl-ipc-unstable-v2.xml $@
 
 config.h:
 	cp config.def.h $@
 clean:
-	rm -f dwl *.o *-protocol.*
+	rm -f dwl *.o *-protocol.h
 
 dist: clean
 	mkdir -p dwl-$(VERSION)
