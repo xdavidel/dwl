@@ -6,4 +6,4 @@ dwl
 *.rej
 .ccls-cache
 config.h
-
+zig-*/
