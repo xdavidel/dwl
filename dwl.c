@@ -2617,18 +2617,18 @@ setsel(struct wl_listener *listener, void *data)
 void
 setup(void)
 {
-	struct sigaction sa_term = {.sa_flags = SA_RESTART, .sa_handler = quitsignal};
-	struct sigaction sa_sigchld = {.sa_flags = SA_RESTART, .sa_handler = sigchld};
-	sigemptyset(&sa_term.sa_mask);
-	sigemptyset(&sa_sigchld.sa_mask);
+	/* Set up signal handlers */
+	struct sigaction sa = {.sa_flags = SA_RESTART, .sa_handler = sigchld};
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGCHLD, &sa, NULL);
+
+	sa.sa_handler = quitsignal;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+
 	/* The Wayland display is managed by libwayland. It handles accepting
 	 * clients from the Unix socket, manging Wayland globals, and so on. */
 	dpy = wl_display_create();
-
-	/* Set up signal handlers */
-	sigaction(SIGCHLD, &sa_sigchld, NULL);
-	sigaction(SIGINT, &sa_term, NULL);
-	sigaction(SIGTERM, &sa_term, NULL);
 
 	/* The backend is a wlroots feature which abstracts the underlying input and
 	 * output hardware. The autocreate option will choose the most suitable
@@ -2807,10 +2807,11 @@ setup(void)
 void
 sigchld(int unused)
 {
+#ifdef XWAYLAND
 	siginfo_t in;
 	/* We should be able to remove this function in favor of a simple
-	 *     struct sigaction sa = {.sa_handler = SIG_IGN};
-	 *     sigaction(SIGCHLD, &sa, NULL);
+	 *	struct sigaction sa = {.sa_handler = SIG_IGN};
+	 * 	sigaction(SIGCHLD, &sa, NULL);
 	 * but the Xwayland implementation in wlroots currently prevents us from
 	 * setting our own disposition for SIGCHLD.
 	 */
@@ -2818,25 +2819,11 @@ sigchld(int unused)
 	 * XWayland process
 	 */
 	while (!waitid(P_ALL, 0, &in, WEXITED|WNOHANG|WNOWAIT) && in.si_pid
-#ifdef XWAYLAND
-			&& (!xwayland || in.si_pid != xwayland->server->pid)
-#endif
-			) {
-		pid_t *p, *lim;
+			&& (!xwayland || in.si_pid != xwayland->server->pid))
 		waitpid(in.si_pid, NULL, 0);
-		if (in.si_pid == child_pid)
-			child_pid = -1;
-		if (!(p = autostart_pids))
-			continue;
-		lim = &p[autostart_len];
-
-		for (; p < lim; p++) {
-			if (*p == in.si_pid) {
-				*p = -1;
-				break;
-			}
-		}
-	}
+#else
+	while (waitpid(-1, NULL, WNOHANG) > 0);
+#endif
 }
 
 void
