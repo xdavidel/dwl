@@ -557,6 +557,8 @@ arrange(Monitor *m)
 		wl_list_for_each(c, &clients, link) {
 			if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 				continue;
+			c->bw = n == smartborders ? 0 : borderpx;
+
 			if (n != smartgaps && enablegaps)
 				applygaps(c);
 			resizeapply(c, c->geom, c->interact);
@@ -2378,6 +2380,8 @@ setfloating(Client *c, int floating)
 {
 	c->isfloating = floating;
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);
+	if (c->isfloating && !c->bw)
+		resize(c, c->mon->m, 0);
 	arrange(c->mon);
 	printstatus();
 }
@@ -2425,6 +2429,12 @@ setlayout(const Arg *arg)
 	if (arg && arg->v)
 		selmon->lt[selmon->sellt] = (Layout *)arg->v;
 	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, LENGTH(selmon->ltsymbol));
+	if (!selmon->lt[selmon->sellt]->arrange) {
+		/* floating layout, draw borders around all clients */
+		Client *c;
+		wl_list_for_each(c, &clients, link)
+			resize(c, c->geom, 0);
+	}
 	arrange(selmon);
 	printstatus();
 }
@@ -3083,7 +3093,7 @@ configurex11(struct wl_listener *listener, void *data)
 		return;
 	if (c->isfloating || c->type == X11Unmanaged)
 		resize(c, (struct wlr_box){.x = event->x, .y = event->y,
-				.width = event->width, .height = event->height}, 0);
+				.width = event->width, .height = event->height}, 0, 1);
 	else
 		arrange(c->mon);
 }
