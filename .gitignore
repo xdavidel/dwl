@@ -1,6 +1,7 @@
 dwl
 *.o
 *.orig
+*.rej
 *-protocol.c
 *-protocol.h
 .ccls-cache
