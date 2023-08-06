@@ -53,14 +53,12 @@ dist: clean
 	rm -rf dwl-$(VERSION)
 
 install: dwl
-	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp -f dwl $(DESTDIR)$(PREFIX)/bin
-	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwl
-	mkdir -p $(DESTDIR)$(MANDIR)/man1
-	cp -f dwl.1 $(DESTDIR)$(MANDIR)/man1
-	chmod 644 $(DESTDIR)$(MANDIR)/man1/dwl.1
+	install -Dm 755 dwl $(DESTDIR)$(PREFIX)/bin/dwl
+	install -Dm 644 dwl.1 $(DESTDIR)$(MANDIR)/man1/dwl.1
+	install -Dm 644 dwl.desktop $(DESKTOP)/dwl.desktop
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/dwl $(DESTDIR)$(MANDIR)/man1/dwl.1
+	rm -f $(DESKTOP)/dwl.desktop
 
 .SUFFIXES: .c .o
 .c.o:
