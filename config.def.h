@@ -14,6 +14,8 @@ static const float focuscolor[]            = {1.0, 0.0, 0.0, 1.0};
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
 
+static const int hide_type = 1;
+
 /* tagging - tagcount must be no greater than 31 */
 #define tagcount 9
 

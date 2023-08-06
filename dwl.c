@@ -292,6 +292,7 @@ static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Client *focustop(Monitor *m);
 static void fullscreennotify(struct wl_listener *listener, void *data);
+static void hidecursor(int hide);
 static void handlesig(int signo);
 static void incnmaster(const Arg *arg);
 static void incgaps(const Arg *arg);
@@ -398,6 +399,7 @@ static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
 
 static struct wlr_cursor *cursor;
 static struct wlr_xcursor_manager *cursor_mgr;
+static int cursor_hidden;
 
 static struct wlr_session_lock_manager_v1 *session_lock_mgr;
 static struct wlr_scene_rect *locked_bg;
@@ -668,6 +670,8 @@ axisnotify(struct wl_listener *listener, void *data)
 	 * for example when you move the scroll wheel. */
 	struct wlr_pointer_axis_event *event = data;
 	IDLE_NOTIFY_ACTIVITY;
+	if(cursor_hidden)
+			hidecursor(0);
 	/* TODO: allow usage of scroll whell for mousebindings, it can be implemented
 	 * checking the event's orientation and the delta of the event */
 	/* Notify the client with pointer focus of the axis event. */
@@ -686,6 +690,8 @@ buttonpress(struct wl_listener *listener, void *data)
 	const Button *b;
 
 	IDLE_NOTIFY_ACTIVITY;
+	if(cursor_hidden)
+		hidecursor(0);
 
 	switch (event->state) {
 	case WLR_BUTTON_PRESSED:
@@ -1678,6 +1684,20 @@ handlesig(int signo)
 }
 
 void
+hidecursor(int hide)
+{
+	if (hide) {
+		wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
+		wlr_seat_pointer_notify_clear_focus(seat);
+		cursor_hidden = 1;
+		return;
+	}
+	wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
+	cursor_hidden = false;
+	motionnotify(0);
+}
+
+void
 incnmaster(const Arg *arg)
 {
 	if (!arg || !selmon)
@@ -1857,6 +1877,8 @@ keypress(struct wl_listener *listener, void *data)
 		wlr_seat_keyboard_notify_key(seat, event->time_msec,
 			event->keycode, event->state);
 	}
+	if(hide_type)
+		hidecursor(1);
 }
 
 void
@@ -2096,6 +2118,8 @@ motionnotify(uint32_t time)
 	/* time is 0 in internal calls meant to restore pointer focus. */
 	if (time) {
 		IDLE_NOTIFY_ACTIVITY;
+		if(cursor_hidden)
+			hidecursor(0);
 
 		/* Update selmon (even while dragging a window) */
 		if (sloppyfocus)
