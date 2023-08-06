@@ -27,6 +27,13 @@ static const char *const autostart[] = {
         NULL /* terminate */
 };
 
+#define MENU "menuwrapper"
+static const Menu menus[] = {
+	/* command                            feed function        action function */
+	{ MENU " -i -l 5 -p Windows",         menuwinfeed,         menuwinaction    },
+	{ MENU " -i -p Layouts",              menulayoutfeed,      menulayoutaction },
+};
+
 static const Rule rules[] = {
 	/* app_id     title             tags mask  iscentered  isfloating  isfullscreen  monitor  scratchkey */
 	/* examples:
@@ -136,6 +143,7 @@ static const Key keys[] = {
 	/* modifier                  key                 function        argument */
 	{ MODKEY,                    Key_slash,          spawn,          SHCMD("menuwrapper -ri") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_slash,          spawn,          SHCMD("menuwrapper -Ri") },
+	{ MODKEY|WLR_MODIFIER_ALT,   Key_slash,          menu,           {.v = &menus[0]} },
 	{ MODKEY,                    Key_Return,         spawn,          SHCMD("$TERMINAL") },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_Return,         togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                    Key_Down,           focusstack,     {.i = +1} },
