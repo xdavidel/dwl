@@ -4,7 +4,7 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const int smartgaps                 = 1;  /* 1 means no outer gap when there is only one window */
 static const int smartborders              = 1;
 static const int monoclegaps               = 0;  /* 1 means outer gaps in monocle layout */
-static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const unsigned int borderpx         = 2;  /* border pixel of windows */
 static const unsigned int gappih           = 10; /* horiz inner gap between windows */
 static const unsigned int gappiv           = 10; /* vert inner gap between windows */
 static const unsigned int gappoh           = 10; /* horiz outer gap between windows and screen edge */
@@ -28,12 +28,13 @@ static const char *const autostart[] = {
 };
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask  iscentered  isfloating  monitor  scratchkey */
+	/* app_id     title             tags mask  iscentered  isfloating  monitor  scratchkey */
 	/* examples:
 	{ "Gimp",     NULL,       0,         0,          1,          -1 },
-	*/
 	{ "firefox",  NULL,       1 << 8,    0,          1,          -1,      0   },
-	{ NULL,     "scratchpad", 0,         1,          1,          -1,      's' },
+	*/
+	{ NULL,       "Media viewer",   0,         0,          0,          -1,       0  },
+	{ NULL,       SCRATCHPAD_TITLE, 0,         1,          1,          -1,      's' },
 };
 
 /* layout(s) */
@@ -60,15 +61,16 @@ static const struct xkb_rule_names xkb_rules = {
 	/* example:
 	.options = "ctrl:nocaps",
 	*/
-	.options = NULL,
+	.layout = "us,il",
+	.options = "grp:alt_shift_toggle",
 };
 
 /* numlock and capslock */
 static const int numlock = 1;
 static const int capslock = 0;
 
-static const int repeat_rate = 25;
-static const int repeat_delay = 600;
+static const int repeat_rate = 50;
+static const int repeat_delay = 300;
 
 /* Trackpad */
 static const int tap_to_click = 1;
@@ -114,6 +116,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
 #define MODKEY WLR_MODIFIER_LOGO
+#define WLR_MODIFIER_CTRL_SHIFT WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT
 
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
@@ -124,11 +127,10 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-#include "shiftview.c"
-
 /* named scratchpads - First arg only serves to match against key in rules*/
 static const char *scratchpadcmd[] = { "s", "alacritty", "-t", SCRATCHPAD_TITLE, NULL };
 
+#include "shiftview.c"
 #include "keys.h"
 static const Key keys[] = {
 	/* modifier                  key                 function        argument */
@@ -178,6 +180,48 @@ static const Key keys[] = {
 	TAGKEYS(                     Key_9,                       8),
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_e,              quit,           {0} },
 
+	{ MODKEY,                    Key_e,                    spawn,             SHCMD("$FILEGUI") },
+	{ MODKEY,                    Key_n,                    spawn,             SHCMD("$TERMINAL -e newsboat && refbar news") },
+	{ MODKEY,                    Key_a,                    spawn,             SHCMD("$TERMINAL dmc control") },
+	{ MODKEY,                    Key_w,                    spawn,             SHCMD("$BROWSER") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_w,                    spawn,             SHCMD("$BROWSERP") },
+	{ MODKEY,                    Key_semicolon,            spawn,             SHCMD("menurepo $HOME/.local/repo/emoji") },
+	{ MODKEY,                    Key_grave,                spawn,             SHCMD("menurepo $HOME/.local/repo/font-awesome-list") },
+	{ MODKEY,                    Key_x,                    spawn,             SHCMD("lockscreen") },
+	{ MODKEY,                    Key_p,                    spawn,             SHCMD("dmc pause") },
+	{ MODKEY,                    Key_comma,                spawn,             SHCMD("dmc prev") },
+	{ MODKEY,                    Key_period,               spawn,             SHCMD("dmc next") },
+	{ MODKEY,                    Key_bracketleft,          spawn,             SHCMD("dmc backward 5") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_bracketleft,          spawn,             SHCMD("dmc backward 5") },
+	{ MODKEY,                    Key_bracketright,         spawn,             SHCMD("dmc forward 5") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_bracketright,         spawn,             SHCMD("dmc forward 5") },
+	{ MODKEY,                    Key_minus,                spawn,             SHCMD("dmc down 5") },
+	{ MODKEY,                    Key_equal,                spawn,             SHCMD("dmc up 5") },
+	{ MODKEY,                    Key_m,                    spawn,             SHCMD("dmc toggle") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_m,                    spawn,             SHCMD("mediaplayer") },
+	{ MODKEY,                    Key_v,                    spawn,             SHCMD("clipmgr -s") },
+	{ MODKEY,                    Key_F2,                   spawn,             SHCMD("freshscreen") },
+	{ MODKEY,                    Key_F3,                   spawn,             SHCMD("wdisplays") },
+	{ MODKEY,                    Key_F4,                   spawn,             SHCMD("sysact") },
+	{ MODKEY,                    Key_F12,                  spawn,             SHCMD("$TERMINAL -e nmtui") },
+	{ MODKEY,                    Key_Insert,               spawn,             SHCMD("$TERMINAL -e notes -n") },
+	{ MODKEY,                    Key_Home,                 spawn,             SHCMD("$TERMINAL -e notes -f") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Home,                 spawn,             SHCMD("$TERMINAL -e notes -g") },
+	{ MODKEY,                    Key_Print,                spawn,             SHCMD("screenshot") },
+	{ 0,                         Key_Print,                spawn,             SHCMD("screenshot -f") },
+	{ WLR_MODIFIER_SHIFT,        Key_Print,                spawn,             SHCMD("screenshot -F") },
+	{ WLR_MODIFIER_CTRL,         Key_Print,                spawn,             SHCMD("screenshot -a") },
+	{ WLR_MODIFIER_CTRL_SHIFT,   Key_Print,                spawn,             SHCMD("screenshot -A") },
+	{ 0,                         Key_XF86MonBrightnessDown,spawn,             SHCMD("brightnessctl s 5%-") },
+	{ 0,                         Key_XF86MonBrightnessUp,  spawn,             SHCMD("brightnessctl s 5%+") },
+	{ 0,                         Key_XF86AudioMicMute,     spawn,             SHCMD("pactl set-source-mute @DEFAULT_SOURCE@ toggle") },
+	{ 0,                         Key_XF86AudioPause,       spawn,             SHCMD("dmc pause") },
+	{ 0,                         Key_XF86AudioPrev,        spawn,             SHCMD("dmc prev") },
+	{ 0,                         Key_XF86AudioNext,        spawn,             SHCMD("dmc next") },
+	{ 0,                         Key_XF86AudioLowerVolume, spawn,             SHCMD("dmc down") },
+	{ 0,                         Key_XF86AudioRaiseVolume, spawn,             SHCMD("dmc up") },
+	{ 0,                         Key_XF86AudioMute,        spawn,             SHCMD("dmc toggle") },
+	{ 0,                         Key_XF86AudioPlay,        spawn,             SHCMD("dmc play") },
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,Key_BackSpace, quit, {0} },
 #define CHVT(KEY,n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, KEY, chvt, {.ui = (n)} }
