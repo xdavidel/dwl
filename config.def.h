@@ -18,11 +18,11 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
 #define tagcount 9
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask     isfloating   monitor */
+	/* app_id     title       tags mask  iscentered  isfloating  monitor */
 	/* examples:
-	{ "Gimp",     NULL,       0,            1,           -1 },
+	{ "Gimp",     NULL,       0,         0,          1,          -1 },
 	*/
-	{ "firefox",  NULL,       1 << 8,       0,           -1 },
+	{ "firefox",  NULL,       1 << 8,    0,          1,          -1 },
 };
 
 /* layout(s) */
