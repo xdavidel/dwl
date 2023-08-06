@@ -226,6 +226,7 @@ typedef struct {
 	uint32_t tags;
 	int iscentered;
 	int isfloating;
+	int isfullscreen;
 	int monitor;
 	const char scratchkey;
 } Rule;
@@ -529,6 +530,7 @@ applyrules(Client *c)
 			c->iscentered = r->iscentered;
 			c->isfloating = r->isfloating;
 			c->scratchkey = r->scratchkey;
+			c->isfullscreen = r->isfullscreen;
 			newtags |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link)
