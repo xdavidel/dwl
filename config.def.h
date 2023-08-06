@@ -18,11 +18,12 @@ static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
 #define tagcount 9
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask  iscentered  isfloating  monitor */
+	/* app_id     title       tags mask  iscentered  isfloating  monitor  scratchkey */
 	/* examples:
 	{ "Gimp",     NULL,       0,         0,          1,          -1 },
 	*/
-	{ "firefox",  NULL,       1 << 8,    0,          1,          -1 },
+	{ "firefox",  NULL,       1 << 8,    0,          1,          -1,      0   },
+	{ NULL,     "scratchpad", 0,         1,          1,          -1,      's' },
 };
 
 /* layout(s) */
@@ -119,11 +120,15 @@ static const char *menucmd[] = { "bemenu-run", NULL };
 
 #include "shiftview.c"
 
+/* named scratchpads - First arg only serves to match against key in rules*/
+static const char *scratchpadcmd[] = { "s", "alacritty", "-t", "scratchpad", NULL };
+
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                  key                 function        argument */
 	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
+	{ MODKEY,                    XKB_KEY_grave,      togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
