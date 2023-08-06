@@ -19,6 +19,12 @@ static const int hide_type = 1;
 /* tagging - tagcount must be no greater than 31 */
 #define tagcount 9
 
+/* Autostart */
+static const char *const autostart[] = {
+		"autostart", NULL,
+        NULL /* terminate */
+};
+
 static const Rule rules[] = {
 	/* app_id     title       tags mask  iscentered  isfloating  monitor  scratchkey */
 	/* examples:
