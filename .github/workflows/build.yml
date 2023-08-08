@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install deps
-      run: sudo apt install wlroots wayland-protocols
+      run: sudo apt-get install libwlroots-dev wayland-protocols
     - name: make
       run: make
     - name: upload artifact
