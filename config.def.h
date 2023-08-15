@@ -210,7 +210,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_m,                    spawn,             SHCMD("dmc toggle") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_m,                    spawn,             SHCMD("mediaplayer") },
 	{ MODKEY,                    Key_v,                    spawn,             SHCMD("clipmgr -s") },
-	{ MODKEY,                    Key_F2,                   spawn,             SHCMD("freshscreen") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_F2,                   spawn,             SHCMD("freshscreen") },
 	{ MODKEY,                    Key_F3,                   spawn,             SHCMD("wdisplays") },
 	{ MODKEY,                    Key_F4,                   spawn,             SHCMD("sysact") },
 	{ MODKEY,                    Key_F12,                  spawn,             SHCMD("$TERMINAL -e nmtui") },
