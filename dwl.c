@@ -322,7 +322,8 @@ static void maximizenotify(struct wl_listener *listener, void *data);
 static void menu(const Arg *arg);
 static int menuloop(void *data);
 static void menuwinfeed(FILE *f);
-static void menuwinaction(char *line);
+static void menuwinswitch(char *line);
+static void menuwinkill(char *line);
 static void menulayoutfeed(FILE *f);
 static void menulayoutaction(char *line);
 static void monocle(Monitor *m);
@@ -2173,13 +2174,13 @@ menuwinfeed(FILE *f)
 }
 
 void
-menuwinaction(char *line)
+menuwinaction(char *line, void(*action)(Client*, Monitor*))
 {
 	Client *c;
 	Monitor *prevm = selmon;
 	const char *title;
 
-	if (!selmon)
+	if (!action || !selmon)
 		return;
 
 	wl_list_for_each(c, &fstack, flink) {
@@ -2191,12 +2192,36 @@ menuwinaction(char *line)
 	return;
 
 found:
+	action(c, prevm);
+}
+
+void
+focusonselectedclient(Client *c, Monitor *mon)
+{
 	focusclient(c, 1);
-	wlr_cursor_move(cursor, NULL, selmon->m.x - prevm->m.x , 0);
+	wlr_cursor_move(cursor, NULL, selmon->m.x - mon->m.x , 0);
 	selmon->seltags ^= 1; /* toggle sel tagset */
 	selmon->tagset[selmon->seltags] = c->tags;
 	arrange(selmon);
 	printstatus();
+}
+
+void
+killselectedclient(Client *c, Monitor *mon)
+{
+	client_send_close(c);
+}
+
+void
+menuwinswitch(char *line)
+{
+	menuwinaction(line, focusonselectedclient);
+}
+
+void
+menuwinkill(char *line)
+{
+	menuwinaction(line, killselectedclient);
 }
 
 void

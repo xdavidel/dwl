@@ -30,7 +30,8 @@ static const char *const autostart[] = {
 #define MENU "menuwrapper"
 static const Menu menus[] = {
 	/* command                            feed function        action function */
-	{ MENU " -i -l 5 -p Windows",         menuwinfeed,         menuwinaction    },
+	{ MENU " -i -l 5 -p Windows",         menuwinfeed,         menuwinswitch    },
+	{ MENU " -i -l 5 -p Windows",         menuwinfeed,         menuwinkill    },
 	{ MENU " -i -p Layouts",              menulayoutfeed,      menulayoutaction },
 };
 
@@ -144,6 +145,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_slash,          spawn,          SHCMD("menuwrapper -ri") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_slash,          spawn,          SHCMD("menuwrapper -Ri") },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_slash,          menu,           {.v = &menus[0]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Delete,         menu,           {.v = &menus[1]} },
 	{ MODKEY,                    Key_Return,         spawn,          SHCMD("$TERMINAL") },
 	{ MODKEY|WLR_MODIFIER_ALT,   Key_Return,         togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                    Key_Down,           focusstack,     {.i = +1} },
